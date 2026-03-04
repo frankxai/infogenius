@@ -1,3 +1,4 @@
+
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -5,77 +6,69 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 import { AspectRatio, ComplexityLevel, VisualStyle, ResearchResult, SearchResultItem, Language } from "../types";
 
-// Create a fresh client for every request to ensure the latest API key from process.env.API_KEY is used
-const getAi = () => {
-  return new GoogleGenAI({ apiKey: process.env.API_KEY });
-};
-
-// Updated to use 'gemini-3-pro-image-preview' for all operations including search grounding and image generation as requested
-const TEXT_MODEL = 'gemini-3-pro-preview';
-const IMAGE_MODEL = 'gemini-3-pro-image-preview';
-const EDIT_MODEL = 'gemini-3-pro-image-preview';
-
+// Helper to get instructions for complexity
 const getLevelInstruction = (level: ComplexityLevel): string => {
   switch (level) {
-    case 'Elementary':
-      return "Target Audience: Elementary School (Ages 6-10). Style: Bright, simple, fun. Use large clear icons and very minimal text labels.";
-    case 'High School':
-      return "Target Audience: High School. Style: Standard Textbook. Clean lines, clear labels, accurate maps or diagrams. Avoid cartoony elements.";
-    case 'College':
-      return "Target Audience: University. Style: Academic Journal. High detail, data-rich, precise cross-sections or complex schematics.";
-    case 'Expert':
-      return "Target Audience: Industry Expert. Style: Technical Blueprint/Schematic. Extremely dense detail, monochrome or technical coloring, precise annotations.";
-    default:
-      return "Target Audience: General Public. Style: Clear and engaging.";
+    case 'Elementary': return "For children: simple, friendly, large icons, minimal text.";
+    case 'High School': return "Educational: clean, labeled diagrams, textbook quality.";
+    case 'College': return "Academic: complex schematics, detailed annotations, professional journal style.";
+    case 'Expert': return "Technical: industrial blueprints, deep data density, expert-level notations.";
+    default: return "General audience.";
   }
 };
 
+// Helper to get instructions for visual style
 const getStyleInstruction = (style: VisualStyle): string => {
   switch (style) {
-    case 'Minimalist': return "Aesthetic: Bauhaus Minimalist. Flat vector art, limited color palette (2-3 colors), reliance on negative space and simple geometric shapes.";
-    case 'Realistic': return "Aesthetic: Photorealistic Composite. Cinematic lighting, 8k resolution, highly detailed textures. Looks like a photograph.";
-    case 'Cartoon': return "Aesthetic: Educational Comic. Vibrant colors, thick outlines, expressive cel-shaded style.";
-    case 'Vintage': return "Aesthetic: 19th Century Scientific Lithograph. Engraving style, sepia tones, textured paper background, fine hatch lines.";
-    case 'Futuristic': return "Aesthetic: Cyberpunk HUD. Glowing neon blue/cyan lines on dark background, holographic data visualization, 3D wireframes.";
-    case '3D Render': return "Aesthetic: 3D Isometric Render. Claymorphism or high-gloss plastic texture, studio lighting, soft shadows, looks like a physical model.";
-    case 'Sketch': return "Aesthetic: Da Vinci Notebook. Ink on parchment sketch, handwritten annotations style, rough but accurate lines.";
-    default: return "Aesthetic: High-quality digital scientific illustration. Clean, modern, highly detailed.";
+    case 'Minimalist': return "Bauhaus minimalist, flat vector, clean geometry, negative space.";
+    case 'Realistic': return "8k photorealistic, cinematic lighting, ultra-detailed textures.";
+    case 'Cartoon': return "Vibrant cel-shaded, comic book style, bold outlines.";
+    case 'Vintage': return "19th-century scientific engraving, sepia tones, textured parchment.";
+    case 'Futuristic': return "Cyberpunk HUD, neon data lines, 3D holographic wireframes.";
+    case '3D Render': return "Octane 3D render, isometric perspective, soft studio lighting.";
+    case 'Sketch': return "Technical charcoal and ink sketch, da Vinci notebook style.";
+    default: return "Modern digital scientific illustration.";
   }
 };
+
+const TEXT_MODEL = 'gemini-3-pro-preview';
+const IMAGE_MODEL = 'gemini-3-pro-image-preview';
+const VIDEO_MODEL = 'veo-3.1-fast-generate-preview';
+const TTS_MODEL = 'gemini-2.5-flash-preview-tts';
 
 export const researchTopicForPrompt = async (
   topic: string, 
   level: ComplexityLevel, 
   style: VisualStyle,
-  language: Language
+  language: Language,
+  aspectRatio: AspectRatio
 ): Promise<ResearchResult> => {
-  
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const orientation = aspectRatio === '9:16' ? 'Portrait (vertical)' : 'Landscape (horizontal)';
   const levelInstr = getLevelInstruction(level);
   const styleInstr = getStyleInstruction(style);
 
   const systemPrompt = `
-    You are an expert visual researcher.
-    Your goal is to research the topic: "${topic}" and create a plan for an infographic.
+    You are a Master Visual Architect. 
+    RESEARCH: Use Google Search to find current data on "${topic}".
+    TARGET AUDIENCE: ${level} (${levelInstr}).
+    AESTHETIC: ${style} (${styleInstr}).
+    LAYOUT: Optimized for a ${orientation} ${aspectRatio} orientation.
     
-    **IMPORTANT: Use the Google Search tool to find the most accurate, up-to-date information about this topic.**
-    
-    Context:
-    ${levelInstr}
-    ${styleInstr}
-    Language: ${language}
-    
-    Please provide your response in the following format EXACTLY:
-    
+    Format your response as follows:
     FACTS:
-    - [Fact 1]
-    - [Fact 2]
-    - [Fact 3]
+    - [Key verified fact 1]
+    - [Key verified fact 2]
+    - [Key verified fact 3]
     
     IMAGE_PROMPT:
-    [A highly detailed image generation prompt describing the visual composition, colors, and layout for the infographic. Do not include citations in the prompt.]
+    [Detailed technical prompt for image generation. Focus on spatial arrangement, labels, and the ${style} aesthetic.]
+
+    VIDEO_PROMPT:
+    [Cinematic prompt for a 7s video sequence based on the image.]
   `;
 
-  const response = await getAi().models.generateContent({
+  const response = await ai.models.generateContent({
     model: TEXT_MODEL,
     contents: systemPrompt,
     config: {
@@ -84,127 +77,81 @@ export const researchTopicForPrompt = async (
   });
 
   const text = response.text || "";
-  
-  // Parse Facts
   const factsMatch = text.match(/FACTS:\s*([\s\S]*?)(?=IMAGE_PROMPT:|$)/i);
-  const factsRaw = factsMatch ? factsMatch[1].trim() : "";
-  const facts = factsRaw.split('\n')
-    .map(f => f.replace(/^-\s*/, '').trim())
-    .filter(f => f.length > 0)
-    .slice(0, 5);
+  const facts = factsMatch ? factsMatch[1].trim().split('\n').map(f => f.replace(/^-\s*/, '').trim()).filter(f => f.length > 0) : [];
+  
+  const imagePrompt = text.match(/IMAGE_PROMPT:\s*([\s\S]*?)(?=VIDEO_PROMPT:|$)/i)?.[1].trim() || `Infographic about ${topic}, ${styleInstr}`;
+  const videoPrompt = text.match(/VIDEO_PROMPT:\s*([\s\S]*?)$/i)?.[1].trim() || `Cinematic data animation about ${topic}`;
 
-  // Parse Prompt
-  const promptMatch = text.match(/IMAGE_PROMPT:\s*([\s\S]*?)$/i);
-  const imagePrompt = promptMatch ? promptMatch[1].trim() : `Create a detailed infographic about ${topic}. ${levelInstr} ${styleInstr}`;
-
-  // Extract Grounding (Search Results)
   const searchResults: SearchResultItem[] = [];
   const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-  
   if (chunks) {
     chunks.forEach(chunk => {
       if (chunk.web?.uri && chunk.web?.title) {
-        searchResults.push({
-          title: chunk.web.title,
-          url: chunk.web.uri
-        });
+        searchResults.push({ title: chunk.web.title, url: chunk.web.uri });
       }
     });
   }
 
-  // Remove duplicates based on URL
-  const uniqueResults = Array.from(new Map(searchResults.map(item => [item.url, item])).values());
-
   return {
-    imagePrompt: imagePrompt,
-    facts: facts,
-    searchResults: uniqueResults
+    imagePrompt,
+    videoPrompt,
+    facts,
+    searchResults: Array.from(new Map(searchResults.map(item => [item.url, item])).values())
   };
 };
 
-export const generateInfographicImage = async (prompt: string): Promise<string> => {
-  // Use Gemini 3 Pro Image Preview for generation
-  const response = await getAi().models.generateContent({
+export const generateInfographicImage = async (prompt: string, aspectRatio: AspectRatio): Promise<string> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const response = await ai.models.generateContent({
     model: IMAGE_MODEL,
-    contents: {
-      parts: [{ text: prompt }]
-    },
+    contents: { parts: [{ text: prompt }] },
+    config: { imageConfig: { aspectRatio, imageSize: "1K" } }
+  });
+
+  const part = response.candidates?.[0]?.content?.parts.find(p => p.inlineData);
+  if (part?.inlineData?.data) return `data:image/png;base64,${part.inlineData.data}`;
+  throw new Error("Image generation failed. Ensure your selected API key has billing enabled.");
+};
+
+export const generateInfographicVideo = async (prompt: string, aspectRatio: AspectRatio): Promise<string> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  let operation = await ai.models.generateVideos({
+    model: VIDEO_MODEL,
+    prompt,
     config: {
-      responseModalities: [Modality.IMAGE],
+      numberOfVideos: 1,
+      resolution: '720p',
+      aspectRatio: aspectRatio === '1:1' ? '16:9' : aspectRatio
     }
   });
 
-  const part = response.candidates?.[0]?.content?.parts?.[0];
-  if (part && part.inlineData && part.inlineData.data) {
-    return `data:image/png;base64,${part.inlineData.data}`;
+  while (!operation.done) {
+    await new Promise(resolve => setTimeout(resolve, 8000));
+    operation = await ai.operations.getVideosOperation({ operation: operation });
   }
-  throw new Error("Failed to generate image");
+
+  const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
+  const res = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
+  const blob = await res.blob();
+  return URL.createObjectURL(blob);
 };
 
-export const verifyInfographicAccuracy = async (
-  imageBase64: string, 
-  topic: string,
-  level: ComplexityLevel,
-  style: VisualStyle,
-  language: Language
-): Promise<{ isAccurate: boolean; critique: string }> => {
-  
-  // Bypassing verification to send straight to image generation
-  return {
-    isAccurate: true,
-    critique: "Verification bypassed."
-  };
-};
-
-export const fixInfographicImage = async (currentImageBase64: string, correctionPrompt: string): Promise<string> => {
-  const cleanBase64 = currentImageBase64.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
-
-  const prompt = `
-    Edit this image. 
-    Goal: Simplify and Fix.
-    Instruction: ${correctionPrompt}.
-    Ensure the design is clean and any text is large and legible.
-  `;
-
-  const response = await getAi().models.generateContent({
-    model: EDIT_MODEL,
-    contents: {
-      parts: [
-        { inlineData: { mimeType: 'image/jpeg', data: cleanBase64 } },
-        { text: prompt }
-      ]
-    },
+export const generateNarration = async (facts: string[]): Promise<string> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const prompt = `Read the following facts clearly and professionally: ${facts.join(". ")}`;
+  const response = await ai.models.generateContent({
+    model: TTS_MODEL,
+    contents: [{ parts: [{ text: prompt }] }],
     config: {
-      responseModalities: [Modality.IMAGE],
-    }
+      responseModalities: [Modality.AUDIO],
+      speechConfig: {
+        voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
+      },
+    },
   });
 
-  const part = response.candidates?.[0]?.content?.parts?.[0];
-  if (part && part.inlineData && part.inlineData.data) {
-    return `data:image/png;base64,${part.inlineData.data}`;
-  }
-  throw new Error("Failed to fix image");
-};
-
-export const editInfographicImage = async (currentImageBase64: string, editInstruction: string): Promise<string> => {
-  const cleanBase64 = currentImageBase64.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
-  
-  const response = await getAi().models.generateContent({
-    model: EDIT_MODEL,
-    contents: {
-      parts: [
-         { inlineData: { mimeType: 'image/jpeg', data: cleanBase64 } },
-         { text: editInstruction }
-      ]
-    },
-    config: {
-      responseModalities: [Modality.IMAGE],
-    }
-  });
-  
-   const part = response.candidates?.[0]?.content?.parts?.[0];
-  if (part && part.inlineData && part.inlineData.data) {
-    return `data:image/png;base64,${part.inlineData.data}`;
-  }
-  throw new Error("Failed to edit image");
+  const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+  if (!base64Audio) throw new Error("Audio generation failed");
+  return `data:audio/wav;base64,${base64Audio}`; 
 };
