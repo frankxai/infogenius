@@ -20,6 +20,8 @@ const getLevelInstruction = (level: ComplexityLevel): string => {
 // Helper to get instructions for visual style
 const getStyleInstruction = (style: VisualStyle): string => {
   switch (style) {
+    case 'Glassmorphic': return "Premium 3D Glassmorphic Infographic. Dark void background (#0b0e14). All information displayed on frosted translucent glass panels floating at different depths. Key concepts rendered as 3D crystal/glass nodes connected by thin luminous teal (#7fffd4) threads. Dramatic directional spotlight from upper-left creating teal rim lighting on all glass surfaces. Gold (#ffd700) accents on highlights. Clean white sans-serif labels on every element.";
+    case 'Premium': return "Luxury tech-brand visual. Apple meets Dior meets DeepMind. Dark void background (#0b0e14). One striking crystal/glass focal element at center with dramatic volumetric lighting. Data and labels on frosted glass cards orbiting the focal point. Thin luminous teal (#7fffd4) connection threads forming constellation pattern. Gold (#ffd700) warm accent highlights.";
     case 'Minimalist': return "Bauhaus minimalist, flat vector, clean geometry, negative space.";
     case 'Realistic': return "8k photorealistic, cinematic lighting, ultra-detailed textures.";
     case 'Cartoon': return "Vibrant cel-shaded, comic book style, bold outlines.";

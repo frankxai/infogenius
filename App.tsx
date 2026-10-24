@@ -25,8 +25,8 @@ const App: React.FC = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [topic, setTopic] = useState('');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('16:9');
-  const [complexityLevel, setComplexityLevel] = useState<ComplexityLevel>('High School');
-  const [visualStyle, setVisualStyle] = useState<VisualStyle>('Default');
+  const [complexityLevel, setComplexityLevel] = useState<ComplexityLevel>('College');
+  const [visualStyle, setVisualStyle] = useState<VisualStyle>('Glassmorphic');
   const [language, setLanguage] = useState<Language>('English');
   
   const [isLoading, setIsLoading] = useState(false);
@@ -279,6 +279,8 @@ const App: React.FC = () => {
                      <option value="Expert">Technical</option>
                    </select>
                    <select value={visualStyle} onChange={e => setVisualStyle(e.target.value as any)} className="bg-slate-100 dark:bg-slate-800 text-[10px] font-bold px-3 py-2 rounded-xl border-none">
+                     <option value="Glassmorphic">3D Glassmorphic (v5.1)</option>
+                     <option value="Premium">Luxury Brand (v5.1)</option>
                      <option value="Default">Modern Science</option>
                      <option value="Minimalist">Minimalist</option>
                      <option value="Realistic">Realistic</option>

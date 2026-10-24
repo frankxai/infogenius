@@ -7,7 +7,7 @@ export type AspectRatio = '16:9' | '9:16' | '1:1';
 
 export type ComplexityLevel = 'Elementary' | 'High School' | 'College' | 'Expert';
 
-export type VisualStyle = 'Default' | 'Minimalist' | 'Realistic' | 'Cartoon' | 'Vintage' | 'Futuristic' | '3D Render' | 'Sketch';
+export type VisualStyle = 'Glassmorphic' | 'Premium' | 'Default' | 'Minimalist' | 'Realistic' | 'Cartoon' | 'Vintage' | 'Futuristic' | '3D Render' | 'Sketch';
 
 export type Language = 'English' | 'Spanish' | 'French' | 'German' | 'Mandarin' | 'Japanese' | 'Hindi' | 'Arabic' | 'Portuguese' | 'Russian';
 
