@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 import { GoogleGenAI, Modality } from "@google/genai";
-import { AspectRatio, ComplexityLevel, VisualStyle, ResearchResult, SearchResultItem, Language } from "../types";
+import { AspectRatio, ComplexityLevel, VisualStyle, ResearchResult, SearchResultItem, Language, ImageResolution, BrandWorld } from "../types";
 
 // Helper to get instructions for complexity
 const getLevelInstruction = (level: ComplexityLevel): string => {
@@ -22,6 +22,10 @@ const getStyleInstruction = (style: VisualStyle): string => {
   switch (style) {
     case 'Glassmorphic': return "Premium 3D Glassmorphic Infographic. Dark void background (#0b0e14). All information displayed on frosted translucent glass panels floating at different depths. Key concepts rendered as 3D crystal/glass nodes connected by thin luminous teal (#7fffd4) threads. Dramatic directional spotlight from upper-left creating teal rim lighting on all glass surfaces. Gold (#ffd700) accents on highlights. Clean white sans-serif labels on every element.";
     case 'Premium': return "Luxury tech-brand visual. Apple meets Dior meets DeepMind. Dark void background (#0b0e14). One striking crystal/glass focal element at center with dramatic volumetric lighting. Data and labels on frosted glass cards orbiting the focal point. Thin luminous teal (#7fffd4) connection threads forming constellation pattern. Gold (#ffd700) warm accent highlights.";
+    case 'Starlight Cosmos': return "Starlight Intelligence Systems Neural Cosmos Infographic. Deep navy void background (#050B14). Crystalline astrolabe nodes connected by cyber-cyan (#00E5FF) and frontier-violet (#8B5CF6) optical conduits. Key human governance gates in warm Starlight Gold (#FCD34D). Crisp Instrument Sans and IBM Plex Mono typography.";
+    case 'GenCreator Editorial': return "GenCreator Territory B Editorial Print Infographic. Warm archival paper background (#FBF9F5) with ultra-crisp deep carbon ink (#221F1B) hairline Swiss grid, technical diagrams, and editorial typography. Selective Spot Red (#C8322A) accent for edition stamps and focal flow.";
+    case 'Arcanea Sacred Geometry': return "Arcanea Sacred Geometry Codex Infographic. Deep cosmic void background (#0B0E14). Golden-ratio astrolabe rings and sacred geometric polyhedra in luminous Arcanean Gold (#FFD700) and Atlantean Teal (#00BCD4) with aquamarine (#7FFFD4) harmonic nodes.";
+    case 'Da Vinci Blueprint': return "Leonardo da Vinci notebook style on dark obsidian parchment (#0a0f1c), warm sepia and gold ink sketches (#f59e0b, #fbbf24) with cyan callout lines (#06b6d4), technical diagrams, exploded views, and crisp architectural annotations.";
     case 'Minimalist': return "Bauhaus minimalist, flat vector, clean geometry, negative space.";
     case 'Realistic': return "8k photorealistic, cinematic lighting, ultra-detailed textures.";
     case 'Cartoon': return "Vibrant cel-shaded, comic book style, bold outlines.";
@@ -45,6 +49,130 @@ const getActiveApiKey = (): string => {
   }
   return process.env.API_KEY || '';
 };
+
+function escapeXml(str: string): string {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+export const buildInteractiveSvgBlueprint = (params: {
+  topic: string;
+  facts: string[];
+  style: VisualStyle;
+  brandWorld?: BrandWorld;
+}): string => {
+  const { topic, facts, style, brandWorld = 'frankx' } = params;
+  const isLight = style === 'GenCreator Editorial';
+  const bgHex = isLight ? '#FBF9F5' : '#080C14';
+  const cardBg = isLight ? '#F3EFE6' : '#0F1624';
+  const textHex = isLight ? '#221F1B' : '#F8FAFC';
+  const mutedHex = isLight ? '#6E665E' : '#94A3B8';
+  const primaryHex =
+    brandWorld === 'starlight'
+      ? '#00E5FF'
+      : brandWorld === 'gencreator'
+        ? '#C8322A'
+        : brandWorld === 'arcanea'
+          ? '#FFD700'
+          : '#14B8A6';
+  const secondaryHex =
+    brandWorld === 'starlight'
+      ? '#8B5CF6'
+      : brandWorld === 'gencreator'
+        ? '#D97706'
+        : brandWorld === 'arcanea'
+          ? '#00BCD4'
+          : '#F59E0B';
+
+  const safeTitle = escapeXml(topic.slice(0, 74));
+  const safeFacts = (facts.length ? facts : ['Fact 1: Verified architecture', 'Fact 2: Deterministic provenance']).slice(0, 4);
+
+  const cardsSvg = safeFacts
+    .map((fact, idx) => {
+      const col = idx % 2;
+      const row = Math.floor(idx / 2);
+      const x = col === 0 ? 60 : 620;
+      const y = row === 0 ? 200 : 395;
+      const line1 = escapeXml(fact.slice(0, 62));
+      const line2 = escapeXml(fact.slice(62, 124));
+      const line3 = escapeXml(fact.slice(124, 182));
+      return `
+      <g transform="translate(${x}, ${y})">
+        <rect width="520" height="160" rx="18" fill="${cardBg}" stroke="${primaryHex}" stroke-opacity="0.4" stroke-width="1.5" />
+        <circle cx="34" cy="36" r="14" fill="${primaryHex}" fill-opacity="0.18" stroke="${primaryHex}" stroke-width="1.2" />
+        <text x="34" y="41" text-anchor="middle" fill="${primaryHex}" font-family="ui-monospace, monospace" font-size="12" font-weight="700">0${idx + 1}</text>
+        <text x="60" y="41" fill="${secondaryHex}" font-family="ui-monospace, monospace" font-size="11" font-weight="700" letter-spacing="1.4">VERIFIED ARCHITECTURE NODE 0${idx + 1}</text>
+        <text x="26" y="76" fill="${textHex}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line1}</text>
+        <text x="26" y="100" fill="${textHex}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line2}</text>
+        <text x="26" y="124" fill="${mutedHex}" font-family="system-ui, sans-serif" font-size="13">${line3}</text>
+      </g>`;
+    })
+    .join('\n');
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="100%" height="100%">
+  <defs>
+    <radialGradient id="igGlow" cx="50%" cy="15%" r="65%">
+      <stop offset="0%" stop-color="${primaryHex}" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="${bgHex}" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="${bgHex}" />
+  <rect width="1200" height="675" fill="url(#igGlow)" />
+  <text x="60" y="64" fill="${primaryHex}" font-family="ui-monospace, monospace" font-size="12" font-weight="700" letter-spacing="2.2">INFOGENIUS v5.3 VECTOR BLUEPRINT · ${escapeXml(brandWorld.toUpperCase())} · ${escapeXml(style.toUpperCase())}</text>
+  <text x="60" y="108" fill="${textHex}" font-family="system-ui, sans-serif" font-size="30" font-weight="800">${safeTitle}</text>
+  <line x1="60" y1="145" x2="1140" y2="145" stroke="${primaryHex}" stroke-opacity="0.3" stroke-width="1.5" />
+  ${cardsSvg}
+  <text x="60" y="635" fill="${mutedHex}" font-family="ui-monospace, monospace" font-size="11">ANTI-SLOP CODE OVERLAY · BUILT ON SIP · ZERO SPELLING ERRORS</text>
+</svg>`;
+};
+
+function wrapPcmBase64InWavDataUrl(pcmBase64: string, sampleRate = 24000): string {
+  const binaryString = atob(pcmBase64);
+  const dataSize = binaryString.length;
+  const numChannels = 1;
+  const bitsPerSample = 16;
+  const byteRate = (sampleRate * numChannels * bitsPerSample) / 8;
+  const blockAlign = (numChannels * bitsPerSample) / 8;
+
+  const buffer = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(buffer);
+
+  const writeStr = (offset: number, str: string) => {
+    for (let i = 0; i < str.length; i++) {
+      view.setUint8(offset + i, str.charCodeAt(i));
+    }
+  };
+
+  writeStr(0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeStr(8, 'WAVE');
+  writeStr(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, byteRate, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bitsPerSample, true);
+  writeStr(36, 'data');
+  view.setUint32(40, dataSize, true);
+
+  const bytes = new Uint8Array(buffer);
+  for (let i = 0; i < dataSize; i++) {
+    bytes[44 + i] = binaryString.charCodeAt(i);
+  }
+
+  let binaryOut = '';
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binaryOut += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + chunkSize)));
+  }
+  return `data:audio/wav;base64,${btoa(binaryOut)}`;
+}
 
 export const researchTopicForPrompt = async (
   topic: string, 
@@ -111,12 +239,16 @@ export const researchTopicForPrompt = async (
   };
 };
 
-export const generateInfographicImage = async (prompt: string, aspectRatio: AspectRatio): Promise<string> => {
+export const generateInfographicImage = async (
+  prompt: string,
+  aspectRatio: AspectRatio,
+  imageSize: ImageResolution = '2K'
+): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: getActiveApiKey() });
   const response = await ai.models.generateContent({
     model: IMAGE_MODEL,
     contents: { parts: [{ text: prompt }] },
-    config: { imageConfig: { aspectRatio, imageSize: "1K" } }
+    config: { imageConfig: { aspectRatio, imageSize } }
   });
 
   const part = response.candidates?.[0]?.content?.parts.find(p => p.inlineData);
@@ -148,21 +280,58 @@ export const generateInfographicVideo = async (prompt: string, aspectRatio: Aspe
   return URL.createObjectURL(blob);
 };
 
-export const generateNarration = async (facts: string[]): Promise<string> => {
+export const generateNarration = async (
+  facts: string[],
+  mode: 'solo' | 'dialogue' = 'solo',
+  topic = 'Executive Architecture'
+): Promise<{ audioUrl: string; transcript: string }> => {
   const ai = new GoogleGenAI({ apiKey: getActiveApiKey() });
-  const prompt = `Read the following facts clearly and professionally: ${facts.join(". ")}`;
+  const cleanFacts = facts.slice(0, 4);
+
+  const transcript =
+    mode === 'dialogue'
+      ? [
+          `Architect: Welcome to the InfoGenius executive briefing on ${topic}.`,
+          cleanFacts[0] ? `Strategist: First core finding: ${cleanFacts[0]}` : '',
+          cleanFacts[1] ? `Architect: Building on that architecture: ${cleanFacts[1]}` : '',
+          cleanFacts[2] ? `Strategist: And looking at verification and telemetry: ${cleanFacts[2]}` : '',
+          cleanFacts[3] ? `Architect: Final takeaway for builders: ${cleanFacts[3]}` : '',
+        ]
+          .filter(Boolean)
+          .join('\n')
+      : `Executive Visual Briefing on ${topic}: ${cleanFacts.join('. ')}`;
+
   const response = await ai.models.generateContent({
     model: TTS_MODEL,
-    contents: [{ parts: [{ text: prompt }] }],
+    contents: [{ parts: [{ text: transcript }] }],
     config: {
       responseModalities: [Modality.AUDIO],
-      speechConfig: {
-        voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
-      },
+      speechConfig:
+        mode === 'dialogue'
+          ? {
+              multiSpeakerVoiceConfig: {
+                speakerVoiceConfigs: [
+                  {
+                    speaker: 'Architect',
+                    voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
+                  },
+                  {
+                    speaker: 'Strategist',
+                    voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Fenrir' } },
+                  },
+                ],
+              },
+            }
+          : {
+              voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
+            },
     },
   });
 
   const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
   if (!base64Audio) throw new Error("Audio generation failed");
-  return `data:audio/wav;base64,${base64Audio}`; 
+  return {
+    audioUrl: wrapPcmBase64InWavDataUrl(base64Audio, 24000),
+    transcript,
+  };
 };

@@ -5,23 +5,45 @@
 */
 export type AspectRatio = '16:9' | '9:16' | '1:1';
 
+export type ImageResolution = '1K' | '2K' | '4K';
+
+export type BrandWorld = 'frankx' | 'starlight' | 'gencreator' | 'arcanea';
+
 export type ComplexityLevel = 'Elementary' | 'High School' | 'College' | 'Expert';
 
-export type VisualStyle = 'Glassmorphic' | 'Premium' | 'Default' | 'Minimalist' | 'Realistic' | 'Cartoon' | 'Vintage' | 'Futuristic' | '3D Render' | 'Sketch';
+export type VisualStyle =
+  | 'Glassmorphic'
+  | 'Premium'
+  | 'Starlight Cosmos'
+  | 'GenCreator Editorial'
+  | 'Arcanea Sacred Geometry'
+  | 'Da Vinci Blueprint'
+  | 'Default'
+  | 'Minimalist'
+  | 'Realistic'
+  | 'Cartoon'
+  | 'Vintage'
+  | 'Futuristic'
+  | '3D Render'
+  | 'Sketch';
 
 export type Language = 'English' | 'Spanish' | 'French' | 'German' | 'Mandarin' | 'Japanese' | 'Hindi' | 'Arabic' | 'Portuguese' | 'Russian';
 
 export interface GeneratedAsset {
   id: string;
   data: string; // Base64 image data URL
+  svgBlueprint?: string; // Deterministic 1200x675 Vector SVG Blueprint
   videoUrl?: string; // Video URL from Veo
-  audioUrl?: string; // Blob URL from TTS
+  audioUrl?: string; // WAV Data URL from TTS
+  audioTranscript?: string; // Solo or 2-Speaker Dialogue transcript
   prompt: string;
   timestamp: number;
   level: ComplexityLevel;
   style: VisualStyle;
   language: Language;
   aspectRatio: AspectRatio;
+  imageSize?: ImageResolution;
+  brandWorld?: BrandWorld;
   facts: string[];
 }
 

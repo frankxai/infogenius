@@ -3,12 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import React, { useState, useEffect } from 'react';
-import { GeneratedAsset, ComplexityLevel, VisualStyle, Language, SearchResultItem, AspectRatio } from './types';
+import {
+  GeneratedAsset,
+  ComplexityLevel,
+  VisualStyle,
+  Language,
+  SearchResultItem,
+  AspectRatio,
+  ImageResolution,
+  BrandWorld,
+} from './types';
 import {
   researchTopicForPrompt,
   generateInfographicImage,
   generateInfographicVideo,
   generateNarration,
+  buildInteractiveSvgBlueprint,
 } from './services/geminiService';
 import Infographic from './components/Infographic';
 import Loading from './components/Loading';
@@ -31,7 +41,96 @@ import {
   Check,
   Download,
   Terminal,
+  Code2,
+  Radio,
 } from 'lucide-react';
+
+const BRAND_WORLDS: Array<{
+  id: BrandWorld;
+  name: string;
+  shortLabel: string;
+  tagline: string;
+  whyBuyersPay: string;
+  defaultStyle: VisualStyle;
+  voidHex: string;
+  primaryHex: string;
+  secondaryHex: string;
+  textHex: string;
+  sampleTopics: string[];
+}> = [
+  {
+    id: 'frankx',
+    name: 'FrankX AI Architect',
+    shortLabel: 'FrankX',
+    tagline: 'Enterprise Systems · Cloud Blueprints · Da Vinci & 3D Isometric',
+    whyBuyersPay:
+      'CTOs, Solution Architects & Engineering Leaders use FrankX to turn complex AI/cloud architectures into board-ready 2K/4K blueprints in 18s.',
+    defaultStyle: 'Glassmorphic',
+    voidHex: '#0B1221',
+    primaryHex: '#00B4D8',
+    secondaryHex: '#C5A059',
+    textHex: '#F8FAFC',
+    sampleTopics: [
+      'Sovereign Multi-Tenant AI Gateway Architecture',
+      'Enterprise RAG & Agentic Governance Topology',
+      'How Transformer Self-Attention Scales to 1M Tokens',
+    ],
+  },
+  {
+    id: 'starlight',
+    name: 'Starlight Sovereign (SIP)',
+    shortLabel: 'Starlight',
+    tagline: 'Agent Swarms · 6 Memory Vaults · Cyber Observability',
+    whyBuyersPay:
+      'Multi-agent builders & DevTools teams use Starlight to visualize MCP meshes, agentic loops, and cryptographic provenance receipts.',
+    defaultStyle: 'Starlight Cosmos',
+    voidHex: '#07090E',
+    primaryHex: '#00E5FF',
+    secondaryHex: '#8B5CF6',
+    textHex: '#F9FAFB',
+    sampleTopics: [
+      'Starlight 6-Vault Event-Sourced Memory Architecture',
+      'Maker vs Independent Verifier Loop Topology',
+      'Model Context Protocol (MCP) Multi-Agent Tool Mesh',
+    ],
+  },
+  {
+    id: 'gencreator',
+    name: 'GenCreator Edition',
+    shortLabel: 'GenCreator',
+    tagline: 'Territory B Editorial · 6-Pillar CoE · Source-to-Edition',
+    whyBuyersPay:
+      'Newsletter operators, content teams & creator founders use GenCreator to turn Markdown essays into 5-slide LinkedIn/X carousels.',
+    defaultStyle: 'GenCreator Editorial',
+    voidHex: '#FBF9F5',
+    primaryHex: '#C8322A',
+    secondaryHex: '#D97706',
+    textHex: '#221F1B',
+    sampleTopics: [
+      'Agentic Creator OS: 6-Layer Closed-Loop Operating Model',
+      'The One-Person Media Lab: Source-to-Edition Pipeline',
+      'GenCreator 6-Pillar Center of Excellence Blueprint',
+    ],
+  },
+  {
+    id: 'arcanea',
+    name: 'Arcanea Canon',
+    shortLabel: 'Arcanea',
+    tagline: 'Ten Gates Sacred Geometry · Illuminated Lore Scrolls',
+    whyBuyersPay:
+      'Worldbuilders, game studios & fiction authors use Arcanea to render canon-locked cosmic maps, magic systems, and illuminated codices.',
+    defaultStyle: 'Arcanea Sacred Geometry',
+    voidHex: '#0A0D18',
+    primaryHex: '#FFD700',
+    secondaryHex: '#00BCD4',
+    textHex: '#F4ECE1',
+    sampleTopics: [
+      'The Ten Gates of Arcanea: Harmonic Frequency Cosmology',
+      'Starbound Crew & Astral Vessel Propulsion Schematic',
+      'Scientific Magic: Resonance & Crystalline Conduit Physics',
+    ],
+  },
+];
 
 const INITIAL_SHOWCASE_ASSETS: GeneratedAsset[] = [
   {
@@ -43,6 +142,8 @@ const INITIAL_SHOWCASE_ASSETS: GeneratedAsset[] = [
     style: 'Premium',
     language: 'English',
     aspectRatio: '16:9',
+    imageSize: '2K',
+    brandWorld: 'gencreator',
     facts: [
       'Adobe 2025 Creators Toolkit survey: 86% of creators actively use generative AI across editing (55%), asset generation (52%), and ideation (48%).',
       'Six-layer closed-loop operating model: 1 Sense → 2 Strategize → 3 Create → 4 Orchestrate → 5 Approve & Publish → 6 Learn & Optimize.',
@@ -58,6 +159,8 @@ const INITIAL_SHOWCASE_ASSETS: GeneratedAsset[] = [
     style: 'Glassmorphic',
     language: 'English',
     aspectRatio: '16:9',
+    imageSize: '2K',
+    brandWorld: 'frankx',
     facts: [
       'Request path: Tenant Application → Authenticated Gateway → Tenant-Aware Policy & DLP Controls → Sovereign Model Endpoint.',
       'Multi-tenancy isolates tenant identity, encryption keys, vector stores, caches, quotas, and audit logs.',
@@ -73,6 +176,8 @@ const INITIAL_SHOWCASE_ASSETS: GeneratedAsset[] = [
     style: '3D Render',
     language: 'English',
     aspectRatio: '16:9',
+    imageSize: '2K',
+    brandWorld: 'starlight',
     facts: [
       'Self-attention exhibits O(n²d) compute complexity for QKᵀV matrix multiplications across context windows.',
       'Multi-Head Attention executes 8 to 64 parallel attention heads capturing syntactic, semantic, and long-range dependencies.',
@@ -88,6 +193,8 @@ const INITIAL_SHOWCASE_ASSETS: GeneratedAsset[] = [
     style: 'Futuristic',
     language: 'English',
     aspectRatio: '16:9',
+    imageSize: '2K',
+    brandWorld: 'arcanea',
     facts: [
       'Global quantum computing market projected to grow from USD 1.88B in 2026 to USD 19.44B by 2035 (29.73% CAGR).',
       'Princeton achieved >1ms qubit coherence (3x laboratory record and ~15x commercial processor standard).',
@@ -125,8 +232,8 @@ const OFFER_TIERS = [
     outputs: [
       '15 Managed Vercel AI Gateway Credits included on frankx.ai/infogenius',
       'Unlimited Client-Side BYOK mode (Google Gemini, Vercel AI Gateway vck_, OpenRouter sk-or-)',
+      'Deterministic 1200×675 Vector SVG Blueprint + Interactive Code-Overlay HUD',
       'Unlimited Article → 5-Slide Carousel Prompt Decomposer',
-      'Custom Brand Style Pack (.preset.json) Builder & Exporter',
       'Zero-Orphan .vis.provenance.json receipt on every generation',
     ],
     ctaLabel: 'Use Free Studio Now',
@@ -143,7 +250,7 @@ const OFFER_TIERS = [
       '100 Managed Vercel AI Gateway Credits added to your Workspace ID',
       'Renders 20 × 2K Infographics (5 cr), 12 × 4K Print Visuals (8 cr), or 33 × 5-Slide Packs (3 cr)',
       'Live Perplexity Sonar & Google Search fact citations baked into every diagram',
-      'Spoken Kore TTS executive audio narration (2 cr) + downloadable WAV',
+      'Solo Kore TTS + 2-Speaker Executive Dialogue (Kore × Fenrir) in 24kHz WAV',
       'Persistent Workspace Gallery & Custom Brand Style Vault in Upstash Redis',
     ],
     ctaLabel: 'Top Up 100 Credits ($19)',
@@ -159,8 +266,8 @@ const OFFER_TIERS = [
     outputs: [
       '350 Managed Vercel AI Gateway Credits (70 × 2K Infographics or 43 × 4K Print Visuals)',
       'Standalone Claude Code, Cursor & Antigravity Plugin (plugins/infogenius-visual-os/)',
-      '6-Tool MCP Server (generate_infographic, animate_infographic, narrate_infographic, research_topic)',
-      'All 18 Brand Presets (Glassmorphic, Luxury Brand, Da Vinci, 3D Isometric, GenCreator CoE, Arcanea)',
+      '6-Tool MCP Server + OpenAPI 3.1 REST endpoint (/api/byok/infogenius?format=openapi)',
+      'All 26 Brand Presets across FrankX, Starlight (SIP), GenCreator Territory B & Arcanea',
       'Batch Markdown-to-5-Slide Carousel CLI (scripts/infogenius.mjs --from-file) + Veo 3.1 motion support',
     ],
     ctaLabel: 'Get Pro OS + 350 Credits ($49)',
@@ -186,10 +293,13 @@ const OFFER_TIERS = [
 ];
 
 const App: React.FC = () => {
-  const [activeMode, setActiveMode] = useState<'studio' | 'carousel' | 'brand' | 'offers'>('studio');
+  const [activeMode, setActiveMode] = useState<'studio' | 'carousel' | 'brand' | 'mcp' | 'offers'>('studio');
+  const [activeBrandWorld, setActiveBrandWorld] = useState<BrandWorld>('frankx');
+  const [canvasView, setCanvasView] = useState<'hud' | 'raster' | 'svg'>('hud');
   const [showIntro, setShowIntro] = useState(false);
   const [topic, setTopic] = useState('');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('16:9');
+  const [imageSize, setImageSize] = useState<ImageResolution>('2K');
   const [complexityLevel, setComplexityLevel] = useState<ComplexityLevel>('College');
   const [visualStyle, setVisualStyle] = useState<VisualStyle>('Glassmorphic');
   const [language] = useState<Language>('English');
@@ -199,7 +309,17 @@ const App: React.FC = () => {
   const [loadingStep, setLoadingStep] = useState<number>(0);
   const [loadingFacts, setLoadingFacts] = useState<string[]>([]);
 
-  const [assets, setAssets] = useState<GeneratedAsset[]>(INITIAL_SHOWCASE_ASSETS);
+  const [assets, setAssets] = useState<GeneratedAsset[]>(() =>
+    INITIAL_SHOWCASE_ASSETS.map((a) => ({
+      ...a,
+      svgBlueprint: buildInteractiveSvgBlueprint({
+        topic: a.prompt,
+        facts: a.facts,
+        style: a.style,
+        brandWorld: a.brandWorld || 'frankx',
+      }),
+    }))
+  );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentSearchResults, setCurrentSearchResults] = useState<SearchResultItem[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -221,6 +341,20 @@ const App: React.FC = () => {
   const [brandMaterial, setBrandMaterial] = useState(
     'Frosted translucent crystal cards floating at multiple depths with directional upper-left rim lighting and luminous connection threads'
   );
+
+  const currentBrandLens = BRAND_WORLDS.find((b) => b.id === activeBrandWorld) || BRAND_WORLDS[0];
+
+  const handleSelectBrandWorld = (worldId: BrandWorld) => {
+    setActiveBrandWorld(worldId);
+    const lens = BRAND_WORLDS.find((b) => b.id === worldId);
+    if (lens) {
+      setVisualStyle(lens.defaultStyle);
+      setBrandVoidHex(lens.voidHex);
+      setBrandPrimaryHex(lens.primaryHex);
+      setBrandSecondaryHex(lens.secondaryHex);
+      setBrandTextHex(lens.textHex);
+    }
+  };
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode);
@@ -282,22 +416,31 @@ const App: React.FC = () => {
       setCurrentSearchResults(research.searchResults);
 
       setLoadingStep(2);
-      setLoadingMessage('Synthesis: Architecting visual layout...');
-      await new Promise((r) => setTimeout(r, 600));
+      setLoadingMessage('Synthesis: Architecting visual layout & SVG blueprint...');
+      const svgBlueprint = buildInteractiveSvgBlueprint({
+        topic,
+        facts: research.facts,
+        style: visualStyle,
+        brandWorld: activeBrandWorld,
+      });
+      await new Promise((r) => setTimeout(r, 400));
 
       setLoadingStep(3);
-      setLoadingMessage('Visualization: Projecting neural imagery...');
-      const imageData = await generateInfographicImage(research.imagePrompt, aspectRatio);
+      setLoadingMessage(`Visualization: Projecting ${imageSize} neural imagery...`);
+      const imageData = await generateInfographicImage(research.imagePrompt, aspectRatio, imageSize);
 
       const newAsset: GeneratedAsset = {
         id: Date.now().toString(),
         data: imageData,
+        svgBlueprint,
         prompt: topic,
         timestamp: Date.now(),
         level: complexityLevel,
         style: visualStyle,
         language,
         aspectRatio,
+        imageSize,
+        brandWorld: activeBrandWorld,
         facts: research.facts,
       };
 
@@ -339,15 +482,19 @@ const App: React.FC = () => {
     }
   };
 
-  const handleNarrate = async () => {
+  const handleNarrate = async (mode: 'solo' | 'dialogue' = 'solo') => {
     const asset = assets[currentIndex];
-    if (asset.audioUrl || isLoading) return;
+    if (isLoading) return;
     setIsLoading(true);
-    setLoadingMessage('Vocal Synthesis: Projecting audio narration...');
+    setLoadingMessage(
+      mode === 'dialogue'
+        ? 'Vocal Synthesis: Recording 2-Host Dialogue (Architect Kore × Strategist Fenrir)...'
+        : 'Vocal Synthesis: Projecting Solo Executive Briefing (Kore)...'
+    );
     try {
-      const audioUrl = await generateNarration(asset.facts);
+      const { audioUrl, transcript } = await generateNarration(asset.facts, mode, asset.prompt);
       const updatedAssets = [...assets];
-      updatedAssets[currentIndex] = { ...asset, audioUrl };
+      updatedAssets[currentIndex] = { ...asset, audioUrl, audioTranscript: transcript };
       setAssets(updatedAssets);
     } catch (err) {
       setError('Narration requires a Google Gemini API key.');
@@ -355,6 +502,25 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const downloadCurrentSvg = () => {
+    const asset = assets[currentIndex];
+    const svg =
+      asset?.svgBlueprint ||
+      buildInteractiveSvgBlueprint({
+        topic: asset?.prompt || 'Architecture Blueprint',
+        facts: asset?.facts || [],
+        style: asset?.style || 'Glassmorphic',
+        brandWorld: asset?.brandWorld || activeBrandWorld,
+      });
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `infogenius-${(asset?.prompt || 'blueprint').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 42)}.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   // Decompose markdown into 5 slides deterministically
@@ -481,10 +647,10 @@ const App: React.FC = () => {
             <Zap className="w-5 h-5 text-cyan-500 fill-current" />
             <div>
               <span className="font-display font-bold text-lg tracking-tight dark:text-white block leading-none">
-                InfoGenius v5.2
+                InfoGenius v5.3
               </span>
               <span className="text-[10px] text-cyan-400 font-semibold">
-                Visual Knowledge OS
+                Multi-Brand Visual Knowledge OS
               </span>
             </div>
           </div>
@@ -494,6 +660,34 @@ const App: React.FC = () => {
           >
             {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
+        </div>
+
+        {/* 4 Sovereign Brand World Lens Selector */}
+        <div className="p-3 border-b border-slate-200 dark:border-white/5 space-y-1.5">
+          <div className="px-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            Sovereign Brand Lens
+          </div>
+          <div className="grid grid-cols-2 gap-1.5">
+            {BRAND_WORLDS.map((bw) => (
+              <button
+                key={bw.id}
+                onClick={() => handleSelectBrandWorld(bw.id)}
+                className={`text-left px-2.5 py-2 rounded-xl border text-[11px] font-bold transition-all ${
+                  activeBrandWorld === bw.id
+                    ? 'bg-cyan-500/15 border-cyan-400/50 text-cyan-300'
+                    : 'border-white/5 bg-white/[0.02] text-slate-400 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span>{bw.shortLabel}</span>
+                  <span
+                    className="w-2.5 h-2.5 rounded-full border border-white/20"
+                    style={{ backgroundColor: bw.primaryHex }}
+                  />
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Mode Navigation */}
@@ -506,7 +700,7 @@ const App: React.FC = () => {
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Zap className="w-3.5 h-3.5" /> 1. 2K Studio
+            <Zap className="w-3.5 h-3.5" /> 1. 2K/4K Studio
           </button>
           <button
             onClick={() => setActiveMode('carousel')}
@@ -529,14 +723,24 @@ const App: React.FC = () => {
             <Palette className="w-3.5 h-3.5" /> 3. Brand DNA
           </button>
           <button
-            onClick={() => setActiveMode('offers')}
+            onClick={() => setActiveMode('mcp')}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+              activeMode === 'mcp'
+                ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Code2 className="w-3.5 h-3.5" /> 4. MCP &amp; API
+          </button>
+          <button
+            onClick={() => setActiveMode('offers')}
+            className={`col-span-2 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
               activeMode === 'offers'
                 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <CreditCard className="w-3.5 h-3.5" /> 4. Offers &amp; Cost
+            <CreditCard className="w-3.5 h-3.5" /> 5. Offers, Unit Economics &amp; Value
           </button>
         </div>
 
@@ -563,7 +767,7 @@ const App: React.FC = () => {
               <div className="text-left truncate">
                 <p className="text-xs font-bold dark:text-slate-200 truncate">{asset.prompt}</p>
                 <p className="text-[10px] text-cyan-400">
-                  {asset.style} · {asset.aspectRatio}
+                  {asset.style} · {asset.imageSize || '2K'} · {asset.aspectRatio}
                 </p>
               </div>
             </button>
@@ -592,8 +796,8 @@ const App: React.FC = () => {
       <main className="flex-1 flex flex-col relative h-screen overflow-hidden">
         {showIntro && <IntroScreen onComplete={() => setShowIntro(false)} />}
 
-        <header className="h-16 border-b border-slate-200 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl flex items-center px-8 justify-between z-40">
-          <div className="flex items-center gap-4">
+        <header className="min-h-16 py-2 border-b border-slate-200 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl flex flex-wrap items-center px-6 justify-between gap-2 z-40">
+          <div className="flex items-center gap-3">
             <h2 className="text-sm font-bold dark:text-white truncate max-w-md">
               {activeMode === 'studio'
                 ? assets[currentIndex]?.prompt || 'New Visual Project'
@@ -601,32 +805,77 @@ const App: React.FC = () => {
                   ? 'Article / Markdown → 5-Slide Executive Carousel Decomposer'
                   : activeMode === 'brand'
                     ? 'Custom Brand Style DNA Builder (infogenius-presets.json)'
-                    : 'InfoGenius v5.2 Offers, Unit Economics, E2E Workflows & Outputs'}
+                    : activeMode === 'mcp'
+                      ? 'MCP Server, Vercel AI SDK v6 & OpenAPI 3.1 Hub'
+                      : 'InfoGenius v5.3 Offers, Unit Economics, E2E Workflows & Outputs'}
             </h2>
             {activeMode === 'studio' && assets[currentIndex] && (
               <span className="rounded-full bg-cyan-500/15 border border-cyan-500/30 px-2.5 py-0.5 text-[10px] font-bold text-cyan-300">
-                {assets[currentIndex].style} · {assets[currentIndex].level}
+                {assets[currentIndex].style} · {assets[currentIndex].imageSize || '2K'}
               </span>
             )}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             {activeMode === 'studio' && (
               <>
+                <div className="inline-flex rounded-lg border border-white/10 bg-slate-900 p-0.5">
+                  <button
+                    onClick={() => setCanvasView('hud')}
+                    className={`px-2 py-1 rounded-md text-[10px] font-bold ${
+                      canvasView === 'hud' ? 'bg-cyan-500/25 text-cyan-300' : 'text-slate-400'
+                    }`}
+                  >
+                    + HUD Overlay
+                  </button>
+                  <button
+                    onClick={() => setCanvasView('raster')}
+                    className={`px-2 py-1 rounded-md text-[10px] font-bold ${
+                      canvasView === 'raster' ? 'bg-violet-500/25 text-violet-300' : 'text-slate-400'
+                    }`}
+                  >
+                    Pure Raster
+                  </button>
+                  <button
+                    onClick={() => setCanvasView('svg')}
+                    className={`px-2 py-1 rounded-md text-[10px] font-bold ${
+                      canvasView === 'svg' ? 'bg-amber-500/25 text-amber-300' : 'text-slate-400'
+                    }`}
+                  >
+                    Vector SVG
+                  </button>
+                </div>
+
                 <button
                   disabled={!assets[currentIndex] || isLoading}
-                  onClick={handleNarrate}
-                  title="Narrate with Kore TTS"
-                  className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-300 hover:text-cyan-400 flex items-center gap-1.5 disabled:opacity-30"
+                  onClick={() => handleNarrate('solo')}
+                  title="Narrate Solo Briefing (Kore TTS)"
+                  className="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-300 hover:text-cyan-400 flex items-center gap-1 disabled:opacity-30"
                 >
-                  <Mic className="w-3.5 h-3.5" /> Narrate
+                  <Mic className="w-3.5 h-3.5" /> Solo (Kore)
+                </button>
+                <button
+                  disabled={!assets[currentIndex] || isLoading}
+                  onClick={() => handleNarrate('dialogue')}
+                  title="2-Host Executive Dialogue (Kore × Fenrir)"
+                  className="px-2.5 py-1.5 rounded-lg bg-violet-500/15 border border-violet-400/30 text-xs font-semibold text-violet-200 hover:bg-violet-500/25 flex items-center gap-1 disabled:opacity-30"
+                >
+                  <Radio className="w-3.5 h-3.5" /> 2-Host Dialogue
+                </button>
+                <button
+                  disabled={!assets[currentIndex]}
+                  onClick={downloadCurrentSvg}
+                  title="Download Deterministic Vector SVG Blueprint"
+                  className="px-2.5 py-1.5 rounded-lg bg-amber-500/15 border border-amber-400/30 text-xs font-semibold text-amber-200 hover:bg-amber-500/25 flex items-center gap-1"
+                >
+                  <Download className="w-3.5 h-3.5" /> .svg
                 </button>
                 <button
                   disabled={!assets[currentIndex] || isLoading}
                   onClick={handleAnimate}
                   title="Animate with Veo 3.1"
-                  className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-300 hover:text-cyan-400 flex items-center gap-1.5 disabled:opacity-30"
+                  className="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-300 hover:text-cyan-400 flex items-center gap-1 disabled:opacity-30"
                 >
-                  <Video className="w-3.5 h-3.5" /> Animate (Veo 3.1)
+                  <Video className="w-3.5 h-3.5" /> Veo 3.1
                 </button>
               </>
             )}
@@ -634,37 +883,110 @@ const App: React.FC = () => {
               href="https://www.frankx.ai/products/infogenius-pro"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 text-xs font-bold flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 text-xs font-bold flex items-center gap-1"
             >
-              Get Pro OS + 350 Credits ($49) <ExternalLink className="w-3 h-3" />
+              Pro OS ($49) <ExternalLink className="w-3 h-3" />
             </a>
           </div>
         </header>
 
-        {/* MODE 1: STUDIO & 2K GALLERY */}
+        {/* MODE 1: STUDIO & 2K/4K GALLERY */}
         {activeMode === 'studio' && (
           <>
-            <div className="flex-1 overflow-y-auto p-8 flex flex-col items-center custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 flex flex-col items-center custom-scrollbar">
               {isLoading ? (
                 <Loading status={loadingMessage} step={loadingStep} facts={loadingFacts} />
               ) : assets.length > 0 ? (
-                <div className="w-full max-w-5xl space-y-8 pb-28">
-                  <Infographic image={assets[currentIndex]} onEdit={() => {}} isEditing={false} />
-                  {assets[currentIndex].facts && assets[currentIndex].facts.length > 0 && (
-                    <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 space-y-3">
-                      <div className="text-xs font-bold uppercase tracking-wider text-cyan-400">
-                        Grounded Knowledge Facts Rendered in Visual
+                <div className="w-full max-w-5xl space-y-6 pb-32">
+                  {/* Brand World Context Strip */}
+                  <div className="rounded-2xl border border-white/10 bg-slate-900/75 p-4 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">
+                        Active Sovereign Brand World · {currentBrandLens.name}
+                      </span>
+                      <p className="text-xs text-slate-300 mt-0.5">{currentBrandLens.whyBuyersPay}</p>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {currentBrandLens.sampleTopics.map((sample) => (
+                        <button
+                          key={sample}
+                          type="button"
+                          onClick={() => setTopic(sample)}
+                          className="rounded-full border border-white/10 bg-white/5 hover:border-cyan-400/40 px-2.5 py-1 text-[11px] text-slate-300 hover:text-white"
+                        >
+                          {sample}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Audio Player + Transcript if Narrated */}
+                  {assets[currentIndex].audioUrl && (
+                    <div className="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-4 space-y-2">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <span className="text-xs font-bold text-cyan-200">
+                          Gemini 2.5 Flash 24kHz WAV Audio Briefing
+                        </span>
+                        <audio controls src={assets[currentIndex].audioUrl} className="h-8" />
                       </div>
-                      <ul className="space-y-2 text-xs text-slate-300 leading-relaxed">
-                        {assets[currentIndex].facts.map((fact, i) => (
-                          <li key={i} className="flex gap-2">
-                            <span className="font-mono font-bold text-cyan-400">{i + 1}.</span>
-                            <span>{fact}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      {assets[currentIndex].audioTranscript && (
+                        <pre className="rounded-xl bg-slate-950/80 border border-white/10 p-3 text-[11px] font-mono text-slate-300 whitespace-pre-wrap">
+                          {assets[currentIndex].audioTranscript}
+                        </pre>
+                      )}
                     </div>
                   )}
+
+                  {/* Canvas View: Vector SVG Blueprint OR Raster + HUD Code-Overlay */}
+                  {canvasView === 'svg' ? (
+                    <div className="rounded-2xl border border-amber-400/35 bg-slate-950 p-4 space-y-2">
+                      <div className="flex items-center justify-between text-xs font-mono text-amber-300">
+                        <span>Deterministic 1200×675 Vector SVG Blueprint (Zero Spelling Errors)</span>
+                        <button onClick={downloadCurrentSvg} className="underline font-sans font-bold">
+                          Download .svg →
+                        </button>
+                      </div>
+                      <div
+                        className="w-full overflow-hidden rounded-xl border border-white/10"
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            assets[currentIndex].svgBlueprint ||
+                            buildInteractiveSvgBlueprint({
+                              topic: assets[currentIndex].prompt,
+                              facts: assets[currentIndex].facts,
+                              style: assets[currentIndex].style,
+                              brandWorld: assets[currentIndex].brandWorld || activeBrandWorld,
+                            }),
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <Infographic image={assets[currentIndex]} onEdit={() => {}} isEditing={false} />
+                      {canvasView === 'hud' && assets[currentIndex].facts?.length > 0 && (
+                        <div className="rounded-2xl border border-cyan-500/25 bg-slate-950/90 p-4">
+                          <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-cyan-400 mb-2.5">
+                            <span>Anti-Slop Code-Overlay HUD · Verified Node Callouts</span>
+                            <span>Built on SIP</span>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            {assets[currentIndex].facts.slice(0, 3).map((fact, idx) => (
+                              <div
+                                key={idx}
+                                className="rounded-xl border border-white/10 bg-slate-900/80 p-3 text-xs text-slate-200"
+                              >
+                                <div className="text-[10px] font-mono font-bold text-cyan-400 mb-1">
+                                  NODE 0{idx + 1} · VERIFIED
+                                </div>
+                                <p className="text-[11px] leading-snug">{fact}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <SearchResults results={currentSearchResults} />
                 </div>
               ) : (
@@ -690,7 +1012,7 @@ const App: React.FC = () => {
                   <input
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
-                    placeholder="Enter any technical topic, system architecture, or concept to research & visualize..."
+                    placeholder={`Enter a ${currentBrandLens.shortLabel} topic, system architecture, or concept to research & visualize...`}
                     className="w-full bg-transparent border-none outline-none font-medium py-3 text-slate-800 dark:text-white"
                   />
                 </div>
@@ -707,6 +1029,15 @@ const App: React.FC = () => {
                       <option value="1:1">1:1 Square</option>
                     </select>
                     <select
+                      value={imageSize}
+                      onChange={(e) => setImageSize(e.target.value as ImageResolution)}
+                      className="bg-slate-100 dark:bg-slate-800 text-xs font-bold px-3 py-2 rounded-xl border-none dark:text-white"
+                    >
+                      <option value="1K">1K Fast</option>
+                      <option value="2K">2K Production</option>
+                      <option value="4K">4K Print</option>
+                    </select>
+                    <select
                       value={complexityLevel}
                       onChange={(e) => setComplexityLevel(e.target.value as any)}
                       className="bg-slate-100 dark:bg-slate-800 text-xs font-bold px-3 py-2 rounded-xl border-none dark:text-white"
@@ -721,8 +1052,12 @@ const App: React.FC = () => {
                       onChange={(e) => setVisualStyle(e.target.value as any)}
                       className="bg-slate-100 dark:bg-slate-800 text-xs font-bold px-3 py-2 rounded-xl border-none dark:text-white"
                     >
-                      <option value="Glassmorphic">3D Glassmorphic (v5.2)</option>
-                      <option value="Premium">Luxury Brand (v5.2)</option>
+                      <option value="Glassmorphic">3D Glassmorphic (v5.3)</option>
+                      <option value="Premium">Luxury Brand (v5.3)</option>
+                      <option value="Starlight Cosmos">Starlight Neural Cosmos (SIP)</option>
+                      <option value="GenCreator Editorial">GenCreator Territory B Editorial</option>
+                      <option value="Arcanea Sacred Geometry">Arcanea Sacred Geometry</option>
+                      <option value="Da Vinci Blueprint">FrankX Da Vinci Blueprint</option>
                       <option value="Default">Modern Science</option>
                       <option value="Minimalist">Minimalist</option>
                       <option value="Realistic">Realistic</option>
@@ -736,9 +1071,9 @@ const App: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-cyan-600/20 transition-all active:scale-95 text-xs"
+                    className="bg-cyan-600 hover:bg-cyan-500 text-white px-7 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-cyan-600/20 transition-all active:scale-95 text-xs"
                   >
-                    <Zap className="w-4 h-4 fill-current" /> GENERATE 2K VISUAL
+                    <Zap className="w-4 h-4 fill-current" /> GENERATE {imageSize} VISUAL
                   </button>
                 </div>
               </form>
@@ -749,6 +1084,113 @@ const App: React.FC = () => {
               )}
             </div>
           </>
+        )}
+
+        {/* MODE 4: MCP SERVER, VERCEL AI SDK & OPENAPI 3.1 HUB */}
+        {activeMode === 'mcp' && (
+          <div className="flex-1 overflow-y-auto p-8">
+            <div className="max-w-5xl mx-auto space-y-6 pb-16">
+              <div className="rounded-2xl border border-white/10 bg-slate-900/75 p-6 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-teal-400">
+                    Agent-Native Visual Intelligence Substrate
+                  </span>
+                  <h3 className="text-xl font-bold text-white mt-1">
+                    Connect InfoGenius v5.3 to Claude Code, Cursor, Antigravity &amp; Next.js
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Active Brand World: <strong className="text-white">{currentBrandLens.name}</strong> · Active Style: <code className="text-cyan-300">{visualStyle}</code>
+                  </p>
+                </div>
+                <a
+                  href="https://www.frankx.ai/api/byok/infogenius?format=openapi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 rounded-xl border border-teal-400/40 bg-teal-500/10 text-xs font-bold text-teal-200 flex items-center gap-1.5"
+                >
+                  OpenAPI 3.1 Spec (JSON) <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase text-cyan-300">
+                      1. Claude Code / Cursor / Antigravity .mcp.json
+                    </span>
+                    <button
+                      onClick={() =>
+                        copyToClipboard(
+                          'mcp-cfg',
+                          JSON.stringify(
+                            {
+                              mcpServers: {
+                                'infogenius-visual-os': {
+                                  command: 'node',
+                                  args: ['scripts/infogenius-mcp-server.mjs'],
+                                  env: {
+                                    INFOGENIUS_DEFAULT_BRAND: activeBrandWorld,
+                                    INFOGENIUS_DEFAULT_STYLE: visualStyle.toLowerCase(),
+                                  },
+                                },
+                              },
+                            },
+                            null,
+                            2
+                          )
+                        )
+                      }
+                      className="px-3 py-1 rounded-lg bg-white/5 text-xs text-white flex items-center gap-1"
+                    >
+                      {copiedId === 'mcp-cfg' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                      Copy .mcp.json
+                    </button>
+                  </div>
+                  <pre className="rounded-xl bg-slate-950 border border-white/10 p-3.5 text-[11px] font-mono text-cyan-200 overflow-x-auto">
+                    {JSON.stringify(
+                      {
+                        mcpServers: {
+                          'infogenius-visual-os': {
+                            command: 'node',
+                            args: ['scripts/infogenius-mcp-server.mjs'],
+                            env: {
+                              INFOGENIUS_DEFAULT_BRAND: activeBrandWorld,
+                              INFOGENIUS_DEFAULT_STYLE: visualStyle.toLowerCase(),
+                            },
+                          },
+                        },
+                      },
+                      null,
+                      2
+                    )}
+                  </pre>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase text-violet-300">
+                      2. Multi-Tenant REST API (cURL)
+                    </span>
+                    <button
+                      onClick={() =>
+                        copyToClipboard(
+                          'curl-cfg',
+                          `curl -X POST https://www.frankx.ai/api/byok/infogenius \\\n  -H "Content-Type: application/json" \\\n  -d '{"action":"generate","topic":"${(topic || 'Sovereign AI Swarm Architecture').replace(/"/g, '\\"')}","style":"${visualStyle.toLowerCase()}","imageSize":"${imageSize}"}'`
+                        )
+                      }
+                      className="px-3 py-1 rounded-lg bg-white/5 text-xs text-white flex items-center gap-1"
+                    >
+                      {copiedId === 'curl-cfg' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                      Copy cURL
+                    </button>
+                  </div>
+                  <pre className="rounded-xl bg-slate-950 border border-white/10 p-3.5 text-[11px] font-mono text-violet-200 overflow-x-auto">
+                    {`curl -X POST https://www.frankx.ai/api/byok/infogenius \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "action": "generate",\n    "topic": "${(topic || 'Sovereign AI Swarm Architecture').replace(/"/g, '\\"')}",\n    "style": "${visualStyle.toLowerCase()}",\n    "imageSize": "${imageSize}"\n  }'`}
+                  </pre>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* MODE 2: ARTICLE TO 5-SLIDE CAROUSEL DECOMPOSER */}
@@ -938,7 +1380,7 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* MODE 4: OFFERS, COSTS, UNIT ECONOMICS & E2E WORKFLOWS */}
+        {/* MODE 5: OFFERS, COSTS, UNIT ECONOMICS & E2E WORKFLOWS */}
         {activeMode === 'offers' && (
           <div className="flex-1 overflow-y-auto p-8">
             <div className="max-w-6xl mx-auto space-y-8 pb-16">
@@ -964,11 +1406,11 @@ const App: React.FC = () => {
                 </div>
                 <div className="rounded-2xl border border-cyan-400/50 bg-cyan-500/10 p-5">
                   <div className="text-xs font-bold uppercase text-cyan-300">
-                    InfoGenius v5.2 Visual Knowledge OS
+                    InfoGenius v5.3 Visual Knowledge OS
                   </div>
                   <div className="text-2xl font-black text-white mt-1">$0.64 – $0.95 / 2K visual</div>
                   <p className="text-xs text-cyan-100/80 mt-2">
-                    ~18 seconds · Live Perplexity Sonar &amp; Google Search citations · Locked Brand DNA · 5-Slide Carousel Decomposer + .vis.provenance.json.
+                    ~18 seconds · Live Perplexity Sonar &amp; Google Search citations · 4 Brand Worlds · Vector SVG + 2-Speaker Dialogue TTS.
                   </p>
                 </div>
               </div>
