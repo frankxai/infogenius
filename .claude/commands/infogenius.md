@@ -8,7 +8,10 @@ Research-grounded visual knowledge generation.
 /infogenius "quantum computing" --style futuristic --audience college --aspect 16:9
 /infogenius "how photosynthesis works" --style technical --audience highschool
 /infogenius "AI agent architecture" --style premium
+/infogenius "how a newsletter edition gets sourced" --pack gencreator --aspect 4:5
 ```
+
+`--pack frankx|starlight|gencreator|arcanea` applies a brand style pack from `.claude/skills/infogenius/packs/`. This replaces the separate `/infogenius-frankx`, `/infogenius-starlight` and `/infogenius-arcanea` commands.
 
 ## Behavior
 

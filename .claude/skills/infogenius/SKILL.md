@@ -27,6 +27,18 @@ Parse the user request into:
 - `audience`: default `general`
 - `aspect_ratio`: default `16:9`
 - `language`: default `English`
+- `pack`: default `none`. One of `frankx`, `starlight`, `gencreator`, `arcanea`. Accepts `--pack <id>` or a phrase such as "in GenCreator style".
+
+## Style packs
+
+A pack is a brand's palette, image direction and bans, generated from the pinned brand pack in `frankxai/starlight-design-intelligence`. Each lives in `packs/<id>.md` beside this file and names its source commit.
+
+- `frankx`: FrankX essays and frankx.ai
+- `starlight`: Starlight Intelligence Systems traces and evidence visuals
+- `gencreator`: creator editions, carousels and essay explainers
+- `arcanea`: Arcanea canon (check `CANON_LOCKED.md` first)
+
+With `pack: none`, use the style list below with a topic-driven palette. A pack sets palette and composition; `style` still chooses the rendering treatment, and a pack's "Never" list overrides any style that conflicts with it.
 
 Supported styles:
 
@@ -56,7 +68,7 @@ Supported audiences:
    - 3-6 visual elements
    - short labels that should appear in the image
    - source URLs or source names
-4. Compose a single detailed image prompt using the template below.
+4. Compose a single detailed image prompt using the template below. If `pack` is set, read `packs/<pack>.md`, append its "Prompt lines to add", and check the draft against its "Never" list before generating.
 5. Generate with the available image MCP. Prefer `mcp__nano-banana__generate_image` with grounding/high quality if available.
 6. If no image MCP exists, return the finished prompt and source grounding clearly.
 7. Present the result with style, audience, aspect ratio, facts used, and sources.
@@ -112,7 +124,7 @@ If the installed MCP exposes a different schema, adapt to its available fields w
 ```markdown
 ## InfoGenius: {topic}
 
-Style: {style} | Audience: {audience} | Aspect: {aspect_ratio}
+Style: {style} | Pack: {pack} | Audience: {audience} | Aspect: {aspect_ratio}
 
 Key facts used:
 1. ...
