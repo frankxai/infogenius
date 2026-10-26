@@ -12,7 +12,9 @@ export default defineConfig(({ command, mode }) => {
     return {
       server: {
         port: 3000,
-        host: '0.0.0.0',
+        // The dev server may hold a key (see above), so it stays on this machine
+        // unless someone opts in with `vite --host`.
+        host: 'localhost',
       },
       plugins: [react()],
       define: {

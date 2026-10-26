@@ -5,6 +5,7 @@
 */
 import { GoogleGenAI, Modality } from "@google/genai";
 import { AspectRatio, ComplexityLevel, VisualStyle, ResearchResult, SearchResultItem, Language, ImageResolution, BrandWorld } from "../types";
+import { STYLE_PACK_COLORS } from "./stylePacks";
 
 // Helper to get instructions for complexity
 const getLevelInstruction = (level: ComplexityLevel): string => {
@@ -66,30 +67,17 @@ export const buildInteractiveSvgBlueprint = (params: {
   brandWorld?: BrandWorld;
 }): string => {
   const { topic, facts, style, brandWorld = 'frankx' } = params;
-  const isLight = style === 'GenCreator Editorial';
-  const bgHex = isLight ? '#FBF9F5' : '#080C14';
-  const cardBg = isLight ? '#F3EFE6' : '#0F1624';
-  const textHex = isLight ? '#221F1B' : '#F8FAFC';
-  const mutedHex = isLight ? '#6E665E' : '#94A3B8';
-  const primaryHex =
-    brandWorld === 'starlight'
-      ? '#00E5FF'
-      : brandWorld === 'gencreator'
-        ? '#C8322A'
-        : brandWorld === 'arcanea'
-          ? '#FFD700'
-          : '#14B8A6';
-  const secondaryHex =
-    brandWorld === 'starlight'
-      ? '#8B5CF6'
-      : brandWorld === 'gencreator'
-        ? '#D97706'
-        : brandWorld === 'arcanea'
-          ? '#00BCD4'
-          : '#F59E0B';
+  const pack = STYLE_PACK_COLORS[brandWorld];
+  const bgHex = pack.ground;
+  const cardBg = pack.surface;
+  const textHex = pack.text;
+  const mutedHex = pack.muted;
+  const primaryHex = pack.primary;
+  const secondaryHex = pack.secondary;
 
   const safeTitle = escapeXml(topic.slice(0, 74));
-  const safeFacts = (facts.length ? facts : ['Fact 1: Verified architecture', 'Fact 2: Deterministic provenance']).slice(0, 4);
+  // No research facts means no cards; the blueprint never invents content.
+  const safeFacts = facts.slice(0, 4);
 
   const cardsSvg = safeFacts
     .map((fact, idx) => {
@@ -105,7 +93,7 @@ export const buildInteractiveSvgBlueprint = (params: {
         <rect width="520" height="160" rx="18" fill="${cardBg}" stroke="${primaryHex}" stroke-opacity="0.4" stroke-width="1.5" />
         <circle cx="34" cy="36" r="14" fill="${primaryHex}" fill-opacity="0.18" stroke="${primaryHex}" stroke-width="1.2" />
         <text x="34" y="41" text-anchor="middle" fill="${primaryHex}" font-family="ui-monospace, monospace" font-size="12" font-weight="700">0${idx + 1}</text>
-        <text x="60" y="41" fill="${secondaryHex}" font-family="ui-monospace, monospace" font-size="11" font-weight="700" letter-spacing="1.4">VERIFIED ARCHITECTURE NODE 0${idx + 1}</text>
+        <text x="60" y="41" fill="${secondaryHex}" font-family="ui-monospace, monospace" font-size="11" font-weight="700" letter-spacing="1.4">FACT 0${idx + 1}</text>
         <text x="26" y="76" fill="${textHex}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line1}</text>
         <text x="26" y="100" fill="${textHex}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line2}</text>
         <text x="26" y="124" fill="${mutedHex}" font-family="system-ui, sans-serif" font-size="13">${line3}</text>
@@ -126,7 +114,7 @@ export const buildInteractiveSvgBlueprint = (params: {
   <text x="60" y="108" fill="${textHex}" font-family="system-ui, sans-serif" font-size="30" font-weight="800">${safeTitle}</text>
   <line x1="60" y1="145" x2="1140" y2="145" stroke="${primaryHex}" stroke-opacity="0.3" stroke-width="1.5" />
   ${cardsSvg}
-  <text x="60" y="635" fill="${mutedHex}" font-family="ui-monospace, monospace" font-size="11">ANTI-SLOP CODE OVERLAY · BUILT ON SIP · ZERO SPELLING ERRORS</text>
+  <text x="60" y="635" fill="${mutedHex}" font-family="ui-monospace, monospace" font-size="11">INFOGENIUS · VECTOR BLUEPRINT · FACTS FROM THE RESEARCH STEP, CHECK THEIR SOURCES</text>
 </svg>`;
 };
 
@@ -275,7 +263,14 @@ export const generateInfographicVideo = async (prompt: string, aspectRatio: Aspe
   }
 
   const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-  const res = await fetch(`${downloadLink}&key=${activeKey}`);
+  if (!downloadLink) throw new Error('Veo returned no video to download.');
+  // The key travels only to Google's API host, in a header rather than the URL.
+  const url = new URL(downloadLink);
+  if (url.protocol !== 'https:' || url.hostname !== 'generativelanguage.googleapis.com') {
+    throw new Error(`Refusing to send the API key to unexpected host ${url.hostname}.`);
+  }
+  const res = await fetch(url, { headers: { 'x-goog-api-key': activeKey } });
+  if (!res.ok) throw new Error(`Video download failed with HTTP ${res.status}.`);
   const blob = await res.blob();
   return URL.createObjectURL(blob);
 };
