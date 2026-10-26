@@ -64,4 +64,9 @@ declare global {
     hasSelectedApiKey: () => Promise<boolean>;
     openSelectKey: () => Promise<void>;
   }
+
+  // Present only when the app runs inside Google AI Studio.
+  interface Window {
+    aistudio?: AIStudio;
+  }
 }
