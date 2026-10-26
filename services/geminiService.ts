@@ -38,6 +38,14 @@ const IMAGE_MODEL = 'gemini-3-pro-image-preview';
 const VIDEO_MODEL = 'veo-3.1-fast-generate-preview';
 const TTS_MODEL = 'gemini-2.5-flash-preview-tts';
 
+const getActiveApiKey = (): string => {
+  if (typeof window !== 'undefined') {
+    const saved = window.localStorage.getItem('infogenius_api_key')?.trim();
+    if (saved) return saved;
+  }
+  return process.env.API_KEY || '';
+};
+
 export const researchTopicForPrompt = async (
   topic: string, 
   level: ComplexityLevel, 
@@ -45,7 +53,7 @@ export const researchTopicForPrompt = async (
   language: Language,
   aspectRatio: AspectRatio
 ): Promise<ResearchResult> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: getActiveApiKey() });
   const orientation = aspectRatio === '9:16' ? 'Portrait (vertical)' : 'Landscape (horizontal)';
   const levelInstr = getLevelInstruction(level);
   const styleInstr = getStyleInstruction(style);
@@ -104,7 +112,7 @@ export const researchTopicForPrompt = async (
 };
 
 export const generateInfographicImage = async (prompt: string, aspectRatio: AspectRatio): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: getActiveApiKey() });
   const response = await ai.models.generateContent({
     model: IMAGE_MODEL,
     contents: { parts: [{ text: prompt }] },
@@ -117,7 +125,8 @@ export const generateInfographicImage = async (prompt: string, aspectRatio: Aspe
 };
 
 export const generateInfographicVideo = async (prompt: string, aspectRatio: AspectRatio): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const activeKey = getActiveApiKey();
+  const ai = new GoogleGenAI({ apiKey: activeKey });
   let operation = await ai.models.generateVideos({
     model: VIDEO_MODEL,
     prompt,
@@ -134,13 +143,13 @@ export const generateInfographicVideo = async (prompt: string, aspectRatio: Aspe
   }
 
   const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-  const res = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
+  const res = await fetch(`${downloadLink}&key=${activeKey}`);
   const blob = await res.blob();
   return URL.createObjectURL(blob);
 };
 
 export const generateNarration = async (facts: string[]): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: getActiveApiKey() });
   const prompt = `Read the following facts clearly and professionally: ${facts.join(". ")}`;
   const response = await ai.models.generateContent({
     model: TTS_MODEL,
