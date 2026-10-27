@@ -18,7 +18,7 @@ The pack marks these as operator-mode references whose site adoption is unverifi
 - Keep it calm and stable to read.
 
 ## Never
-- Radiant particle fields, neural-cosmos imagery, hype science fiction
+- Radiant particle fields, hype science fiction
 - Moving dashboards or generic dashboard filler
 - Uncited confidence claims, black-box intelligence
 - Phrases: "sentient system", "autonomous revolution", "magic intelligence"

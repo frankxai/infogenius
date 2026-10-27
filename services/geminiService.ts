@@ -67,13 +67,7 @@ export const buildInteractiveSvgBlueprint = (params: {
   brandWorld?: BrandWorld;
 }): string => {
   const { topic, facts, style, brandWorld = 'frankx' } = params;
-  const pack = STYLE_PACK_COLORS[brandWorld];
-  const bgHex = pack.ground;
-  const cardBg = pack.surface;
-  const textHex = pack.text;
-  const mutedHex = pack.muted;
-  const primaryHex = pack.primary;
-  const secondaryHex = pack.secondary;
+  const { ground, ink, line, spot } = STYLE_PACK_COLORS[brandWorld];
 
   const safeTitle = escapeXml(topic.slice(0, 74));
   // No research facts means no cards; the blueprint never invents content.
@@ -90,31 +84,25 @@ export const buildInteractiveSvgBlueprint = (params: {
       const line3 = escapeXml(fact.slice(124, 182));
       return `
       <g transform="translate(${x}, ${y})">
-        <rect width="520" height="160" rx="18" fill="${cardBg}" stroke="${primaryHex}" stroke-opacity="0.4" stroke-width="1.5" />
-        <circle cx="34" cy="36" r="14" fill="${primaryHex}" fill-opacity="0.18" stroke="${primaryHex}" stroke-width="1.2" />
-        <text x="34" y="41" text-anchor="middle" fill="${primaryHex}" font-family="ui-monospace, monospace" font-size="12" font-weight="700">0${idx + 1}</text>
-        <text x="60" y="41" fill="${secondaryHex}" font-family="ui-monospace, monospace" font-size="11" font-weight="700" letter-spacing="1.4">FACT 0${idx + 1}</text>
-        <text x="26" y="76" fill="${textHex}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line1}</text>
-        <text x="26" y="100" fill="${textHex}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line2}</text>
-        <text x="26" y="124" fill="${mutedHex}" font-family="system-ui, sans-serif" font-size="13">${line3}</text>
+        <rect width="520" height="160" rx="18" fill="${ink}" fill-opacity="0.04" stroke="${line}" stroke-opacity="0.4" stroke-width="1.5" />
+        <circle cx="34" cy="36" r="14" fill="none" stroke="${line}" stroke-width="1.2" />
+        <text x="34" y="41" text-anchor="middle" fill="${line}" font-family="ui-monospace, monospace" font-size="12" font-weight="700">0${idx + 1}</text>
+        <text x="60" y="41" fill="${ink}" fill-opacity="0.7" font-family="ui-monospace, monospace" font-size="11" font-weight="700" letter-spacing="1.4">FACT 0${idx + 1}</text>
+        <text x="26" y="76" fill="${ink}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line1}</text>
+        <text x="26" y="100" fill="${ink}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line2}</text>
+        <text x="26" y="124" fill="${ink}" fill-opacity="0.65" font-family="system-ui, sans-serif" font-size="13">${line3}</text>
       </g>`;
     })
     .join('\n');
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="100%" height="100%">
-  <defs>
-    <radialGradient id="igGlow" cx="50%" cy="15%" r="65%">
-      <stop offset="0%" stop-color="${primaryHex}" stop-opacity="0.18" />
-      <stop offset="100%" stop-color="${bgHex}" stop-opacity="0" />
-    </radialGradient>
-  </defs>
-  <rect width="1200" height="675" fill="${bgHex}" />
-  <rect width="1200" height="675" fill="url(#igGlow)" />
-  <text x="60" y="64" fill="${primaryHex}" font-family="ui-monospace, monospace" font-size="12" font-weight="700" letter-spacing="2.2">INFOGENIUS v5.3 VECTOR BLUEPRINT · ${escapeXml(brandWorld.toUpperCase())} · ${escapeXml(style.toUpperCase())}</text>
-  <text x="60" y="108" fill="${textHex}" font-family="system-ui, sans-serif" font-size="30" font-weight="800">${safeTitle}</text>
-  <line x1="60" y1="145" x2="1140" y2="145" stroke="${primaryHex}" stroke-opacity="0.3" stroke-width="1.5" />
+  <rect width="1200" height="675" fill="${ground}" />
+  <text x="60" y="64" fill="${line}" font-family="ui-monospace, monospace" font-size="12" font-weight="700" letter-spacing="2.2">INFOGENIUS VECTOR BLUEPRINT · ${escapeXml(brandWorld.toUpperCase())} · ${escapeXml(style.toUpperCase())}</text>
+  <text x="60" y="108" fill="${ink}" font-family="system-ui, sans-serif" font-size="30" font-weight="800">${safeTitle}</text>
+  <line x1="60" y1="145" x2="1140" y2="145" stroke="${line}" stroke-opacity="0.3" stroke-width="1.5" />
   ${cardsSvg}
-  <text x="60" y="635" fill="${mutedHex}" font-family="ui-monospace, monospace" font-size="11">INFOGENIUS · VECTOR BLUEPRINT · FACTS FROM THE RESEARCH STEP, CHECK THEIR SOURCES</text>
+  <rect x="60" y="626" width="10" height="10" fill="${spot}" />
+  <text x="80" y="635" fill="${ink}" fill-opacity="0.7" font-family="ui-monospace, monospace" font-size="11">SOURCE: FACTS FROM THE RESEARCH STEP. CHECK EACH ONE AGAINST ITS LINK.</text>
 </svg>`;
 };
 

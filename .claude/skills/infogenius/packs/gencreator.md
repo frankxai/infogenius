@@ -10,7 +10,7 @@ The visual is for a creator, a newsletter edition or a GenCreator surface: the d
 - Ink `#221f1b` (text and line)
 - Signal red `#c8322a`: once per object, to mark edition, source, state or signature
 
-Paper and ink carry at least 90% of the composition. Red alone never carries meaning.
+Paper and ink carry at least 90% of the composition. Spot red registers edition, source, state or signature once per object. Brand color alone must not communicate state: pair it with a label.
 
 ## Direction
 - Make authorship and source evidence visible: cite the source on the visual.

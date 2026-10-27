@@ -14,3 +14,4 @@ Every number, price or capability shown in the UI must be true of this repo toda
 
 ## Verification
 - Run `npx tsc --noEmit` and `npm run build` (`vite build`) before pushing or opening a draft PR.
+- After touching a style pack: `node scripts/check-style-packs.mjs . <path-to-starlight-design-intelligence>` (exit 1 if any hex is not in the pinned brand pack).

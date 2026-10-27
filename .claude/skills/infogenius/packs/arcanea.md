@@ -10,7 +10,7 @@ The visual explains Arcanea canon (worlds, characters, the creator tools) for wo
 - Cosmic blue `#0d47a1`
 - Arcanean gold `#ffd700`
 
-The pack approves these as references only; no new palette placement is approved.
+The pack approves these as references only; no new palette placement is approved. The InfoGenius app uses cosmic blue as ground, gold as text, teal for lines, pending the Arcanea owner's reconciliation; treat any Arcanea visual as a draft until then.
 
 ## Direction
 - Creator artifacts carry the mythology: show the codex, the world, the tool.
@@ -21,6 +21,9 @@ The pack approves these as references only; no new palette placement is approved
 - Purple cliché, generic generated texture, fantasy cosplay
 - Mythology with no product consequence, unreadable lore
 - Emoji or Unicode glyphs as icons
+- Higgsfield tools or skills
+- Cinematic reference colors substituted for unresolved product tokens
+- An unverified raster or system-font SVG promoted as an approved vector identity master
 - Phrases: "generic magic", "limitless possibilities", "AI-powered fantasy"
 
 ## Prompt lines to add

@@ -67,9 +67,9 @@ const BRAND_WORLDS: Array<{
       'For architects and engineering leads who need an AI or cloud architecture explained in one sourced visual.',
     defaultStyle: 'Da Vinci Blueprint',
     voidHex: STYLE_PACK_COLORS.frankx.ground,
-    primaryHex: STYLE_PACK_COLORS.frankx.primary,
-    secondaryHex: STYLE_PACK_COLORS.frankx.secondary,
-    textHex: STYLE_PACK_COLORS.frankx.text,
+    primaryHex: STYLE_PACK_COLORS.frankx.line,
+    secondaryHex: STYLE_PACK_COLORS.frankx.spot,
+    textHex: STYLE_PACK_COLORS.frankx.ink,
     sampleTopics: [
       'Sovereign Multi-Tenant AI Gateway Architecture',
       'Enterprise RAG & Agentic Governance Topology',
@@ -85,9 +85,9 @@ const BRAND_WORLDS: Array<{
       'For agent builders who need to show what an agent did, step by step, with the evidence behind each step.',
     defaultStyle: 'Minimalist',
     voidHex: STYLE_PACK_COLORS.starlight.ground,
-    primaryHex: STYLE_PACK_COLORS.starlight.primary,
-    secondaryHex: STYLE_PACK_COLORS.starlight.secondary,
-    textHex: STYLE_PACK_COLORS.starlight.text,
+    primaryHex: STYLE_PACK_COLORS.starlight.line,
+    secondaryHex: STYLE_PACK_COLORS.starlight.spot,
+    textHex: STYLE_PACK_COLORS.starlight.ink,
     sampleTopics: [
       'Starlight 6-Vault Event-Sourced Memory Architecture',
       'Maker vs Independent Verifier Loop Topology',
@@ -103,9 +103,9 @@ const BRAND_WORLDS: Array<{
       'For newsletter operators and creators who turn an essay into a five-slide carousel that cites its sources.',
     defaultStyle: 'GenCreator Editorial',
     voidHex: STYLE_PACK_COLORS.gencreator.ground,
-    primaryHex: STYLE_PACK_COLORS.gencreator.primary,
-    secondaryHex: STYLE_PACK_COLORS.gencreator.secondary,
-    textHex: STYLE_PACK_COLORS.gencreator.text,
+    primaryHex: STYLE_PACK_COLORS.gencreator.line,
+    secondaryHex: STYLE_PACK_COLORS.gencreator.spot,
+    textHex: STYLE_PACK_COLORS.gencreator.ink,
     sampleTopics: [
       'Agentic Creator OS: 6-Layer Closed-Loop Operating Model',
       'The One-Person Media Lab: Source-to-Edition Pipeline',
@@ -121,9 +121,9 @@ const BRAND_WORLDS: Array<{
       'For Arcanea creators who need a canon-checked map, codex page or system diagram.',
     defaultStyle: 'Arcanea Sacred Geometry',
     voidHex: STYLE_PACK_COLORS.arcanea.ground,
-    primaryHex: STYLE_PACK_COLORS.arcanea.primary,
-    secondaryHex: STYLE_PACK_COLORS.arcanea.secondary,
-    textHex: STYLE_PACK_COLORS.arcanea.text,
+    primaryHex: STYLE_PACK_COLORS.arcanea.line,
+    secondaryHex: STYLE_PACK_COLORS.arcanea.spot,
+    textHex: STYLE_PACK_COLORS.arcanea.ink,
     sampleTopics: [
       'The Ten Gates of Arcanea: Harmonic Frequency Cosmology',
       'Starbound Crew & Astral Vessel Propulsion Schematic',
@@ -230,7 +230,7 @@ const App: React.FC = () => {
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('16:9');
   const [imageSize, setImageSize] = useState<ImageResolution>('2K');
   const [complexityLevel, setComplexityLevel] = useState<ComplexityLevel>('College');
-  const [visualStyle, setVisualStyle] = useState<VisualStyle>('Glassmorphic');
+  const [visualStyle, setVisualStyle] = useState<VisualStyle>(BRAND_WORLDS[0].defaultStyle);
   const [language] = useState<Language>('English');
 
   const [isLoading, setIsLoading] = useState(false);
@@ -264,7 +264,7 @@ const App: React.FC = () => {
   const [brandKey, setBrandKey] = useState('custom/sovereign-glass');
   const [brandName, setBrandName] = useState('Sovereign Crystal & Gold');
   const [brandVoidHex, setBrandVoidHex] = useState('#0b0e14');
-  const [brandPrimaryHex, setBrandPrimaryHex] = useState('#7fffd4');
+  const [brandPrimaryHex, setBrandPrimaryHex] = useState('#10b981');
   const [brandSecondaryHex, setBrandSecondaryHex] = useState('#ffd700');
   const [brandTextHex, setBrandTextHex] = useState('#ffffff');
   const [brandMaterial, setBrandMaterial] = useState(
@@ -378,7 +378,7 @@ const App: React.FC = () => {
     } catch (err: any) {
       console.error(err);
       if (err.message?.includes('permission') || err.message?.includes('403') || err.message?.includes('API key')) {
-        setError('API Key Required: Click "Configure API Key" in the sidebar or use the Multi-Tenant Studio on frankx.ai/infogenius.');
+        setError('API Key Required: Click "Configure API Key" in the sidebar and paste your own Gemini key.');
         setShowKeyModal(true);
       } else {
         setError(err.message || 'Engine failure. Check API key/billing.');
@@ -537,7 +537,7 @@ const App: React.FC = () => {
             </div>
             <p id="byok-dialog-description" className="text-xs text-slate-400 leading-relaxed">
               Paste your Google AI Studio <code className="text-cyan-400">GEMINI_API_KEY</code> to generate 2K/4K visuals, Veo motion and narration.
-              The key stays in this browser's local storage and is sent only to Google's API. The vector blueprint works without a key.
+              The key stays in this browser's local storage, and the app sends it only to Google's API. The vector blueprint works without a key.
             </p>
             <label htmlFor="byok-key-input" className="sr-only">
               Gemini API key
@@ -573,7 +573,10 @@ const App: React.FC = () => {
       )}
 
       {/* Workspace Sidebar */}
-      <aside className="w-full md:w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-white/5 flex flex-col z-50">
+      <aside
+        inert={showKeyModal}
+        className="w-full md:w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-white/5 flex flex-col z-50"
+      >
         <div className="p-5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-cyan-500 fill-current" />
@@ -717,7 +720,7 @@ const App: React.FC = () => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col relative h-screen overflow-hidden">
+      <main inert={showKeyModal} className="flex-1 flex flex-col relative h-screen overflow-hidden">
         {showIntro && <IntroScreen onComplete={() => setShowIntro(false)} />}
 
         <header className="min-h-16 py-2 border-b border-slate-200 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl flex flex-wrap items-center px-6 justify-between gap-2 z-40">
@@ -1175,7 +1178,7 @@ const App: React.FC = () => {
                     Custom Brand Style Pack Builder (<code>infogenius-presets.json</code>)
                   </h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    Lock your team&apos;s hex palette and material physics into a reusable preset for the Web Studio, local CLI, and Claude Code / Cursor MCP Server.
+                    Lock your team&apos;s hex palette and material physics into a reusable preset for this studio, the Claude Code skill and the MCP server.
                   </p>
                 </div>
 
