@@ -23,6 +23,7 @@ import {
 import Infographic from './components/Infographic';
 import Loading from './components/Loading';
 import IntroScreen from './components/IntroScreen';
+import { STYLE_PACK_COLORS } from './services/stylePacks';
 import SearchResults from './components/SearchResults';
 import {
   Search,
@@ -36,7 +37,6 @@ import {
   Zap,
   Layers,
   Palette,
-  CreditCard,
   Copy,
   Check,
   Download,
@@ -62,14 +62,14 @@ const BRAND_WORLDS: Array<{
     id: 'frankx',
     name: 'FrankX AI Architect',
     shortLabel: 'FrankX',
-    tagline: 'Enterprise Systems · Cloud Blueprints · Da Vinci & 3D Isometric',
+    tagline: 'Architecture explainers · Da Vinci blueprints',
     whyBuyersPay:
-      'CTOs, Solution Architects & Engineering Leaders use FrankX to turn complex AI/cloud architectures into board-ready 2K/4K blueprints in 18s.',
-    defaultStyle: 'Glassmorphic',
-    voidHex: '#0B1221',
-    primaryHex: '#00B4D8',
-    secondaryHex: '#C5A059',
-    textHex: '#F8FAFC',
+      'For architects and engineering leads who need an AI or cloud architecture explained in one sourced visual.',
+    defaultStyle: 'Da Vinci Blueprint',
+    voidHex: STYLE_PACK_COLORS.frankx.ground,
+    primaryHex: STYLE_PACK_COLORS.frankx.line,
+    secondaryHex: STYLE_PACK_COLORS.frankx.spot,
+    textHex: STYLE_PACK_COLORS.frankx.ink,
     sampleTopics: [
       'Sovereign Multi-Tenant AI Gateway Architecture',
       'Enterprise RAG & Agentic Governance Topology',
@@ -78,16 +78,16 @@ const BRAND_WORLDS: Array<{
   },
   {
     id: 'starlight',
-    name: 'Starlight Sovereign (SIP)',
+    name: 'Starlight Intelligence',
     shortLabel: 'Starlight',
-    tagline: 'Agent Swarms · 6 Memory Vaults · Cyber Observability',
+    tagline: 'Agent traces · Evidence stacks',
     whyBuyersPay:
-      'Multi-agent builders & DevTools teams use Starlight to visualize MCP meshes, agentic loops, and cryptographic provenance receipts.',
-    defaultStyle: 'Starlight Cosmos',
-    voidHex: '#07090E',
-    primaryHex: '#00E5FF',
-    secondaryHex: '#8B5CF6',
-    textHex: '#F9FAFB',
+      'For agent builders who need to show what an agent did, step by step, with the evidence behind each step.',
+    defaultStyle: 'Minimalist',
+    voidHex: STYLE_PACK_COLORS.starlight.ground,
+    primaryHex: STYLE_PACK_COLORS.starlight.line,
+    secondaryHex: STYLE_PACK_COLORS.starlight.spot,
+    textHex: STYLE_PACK_COLORS.starlight.ink,
     sampleTopics: [
       'Starlight 6-Vault Event-Sourced Memory Architecture',
       'Maker vs Independent Verifier Loop Topology',
@@ -98,14 +98,14 @@ const BRAND_WORLDS: Array<{
     id: 'gencreator',
     name: 'GenCreator Edition',
     shortLabel: 'GenCreator',
-    tagline: 'Territory B Editorial · 6-Pillar CoE · Source-to-Edition',
+    tagline: 'Editorial · Source-to-edition carousels',
     whyBuyersPay:
-      'Newsletter operators, content teams & creator founders use GenCreator to turn Markdown essays into 5-slide LinkedIn/X carousels.',
+      'For newsletter operators and creators who turn an essay into a five-slide carousel that cites its sources.',
     defaultStyle: 'GenCreator Editorial',
-    voidHex: '#FBF9F5',
-    primaryHex: '#C8322A',
-    secondaryHex: '#D97706',
-    textHex: '#221F1B',
+    voidHex: STYLE_PACK_COLORS.gencreator.ground,
+    primaryHex: STYLE_PACK_COLORS.gencreator.line,
+    secondaryHex: STYLE_PACK_COLORS.gencreator.spot,
+    textHex: STYLE_PACK_COLORS.gencreator.ink,
     sampleTopics: [
       'Agentic Creator OS: 6-Layer Closed-Loop Operating Model',
       'The One-Person Media Lab: Source-to-Edition Pipeline',
@@ -118,12 +118,12 @@ const BRAND_WORLDS: Array<{
     shortLabel: 'Arcanea',
     tagline: 'Ten Gates Sacred Geometry · Illuminated Lore Scrolls',
     whyBuyersPay:
-      'Worldbuilders, game studios & fiction authors use Arcanea to render canon-locked cosmic maps, magic systems, and illuminated codices.',
+      'For Arcanea creators who need a canon-checked map, codex page or system diagram.',
     defaultStyle: 'Arcanea Sacred Geometry',
-    voidHex: '#0A0D18',
-    primaryHex: '#FFD700',
-    secondaryHex: '#00BCD4',
-    textHex: '#F4ECE1',
+    voidHex: STYLE_PACK_COLORS.arcanea.ground,
+    primaryHex: STYLE_PACK_COLORS.arcanea.line,
+    secondaryHex: STYLE_PACK_COLORS.arcanea.spot,
+    textHex: STYLE_PACK_COLORS.arcanea.ink,
     sampleTopics: [
       'The Ten Gates of Arcanea: Harmonic Frequency Cosmology',
       'Starbound Crew & Astral Vessel Propulsion Schematic',
@@ -164,7 +164,7 @@ const INITIAL_SHOWCASE_ASSETS: GeneratedAsset[] = [
     facts: [
       'Request path: Tenant Application → Authenticated Gateway → Tenant-Aware Policy & DLP Controls → Sovereign Model Endpoint.',
       'Multi-tenancy isolates tenant identity, encryption keys, vector stores, caches, quotas, and audit logs.',
-      'EU AI Act Article 26 requires deployer-controlled log retention for at least 6 months alongside NIST AI RMF lifecycle governance.',
+      'For high-risk AI systems, EU AI Act Article 26(6) requires deployers to keep automatically generated logs for at least six months.',
     ],
   },
   {
@@ -218,82 +218,11 @@ Modern multi-agent systems fail when every agent shares a single unverified cont
 - Money, credentials, DNS, and external sends fail closed behind named human approval.
 
 ## 3. Production Telemetry & Cost Economics
-- Dynamic model routing cuts token spend by 68% by routing mechanical checks to deterministic scripts.
-- 100% of visual and code outputs emit verifiable receipts into the central scoreboard.`;
-
-const OFFER_TIERS = [
-  {
-    name: 'Starter Workspace & BYOK',
-    price: '$0',
-    period: 'Free Forever · 15 Trial Credits',
-    unitCost: '3 Free 2K Visuals + Unlimited BYOK',
-    badge: 'Instant Start · No Card Required',
-    highlight: false,
-    outputs: [
-      '15 Managed Vercel AI Gateway Credits included on frankx.ai/infogenius',
-      'Unlimited Client-Side BYOK mode (Google Gemini, Vercel AI Gateway vck_, OpenRouter sk-or-)',
-      'Deterministic 1200×675 Vector SVG Blueprint + Interactive Code-Overlay HUD',
-      'Unlimited Article → 5-Slide Carousel Prompt Decomposer',
-      'Zero-Orphan .vis.provenance.json receipt on every generation',
-    ],
-    ctaLabel: 'Use Free Studio Now',
-    ctaHref: 'https://www.frankx.ai/infogenius#studio',
-  },
-  {
-    name: 'Creator 100-Credit Pack',
-    price: '$19',
-    period: 'One-Time Credit Pack · Never Expires',
-    unitCost: '$0.95 per 2K Grounded Infographic',
-    badge: '20 × 2K Visuals · Zero Key Setup',
-    highlight: false,
-    outputs: [
-      '100 Managed Vercel AI Gateway Credits added to your Workspace ID',
-      'Renders 20 × 2K Infographics (5 cr), 12 × 4K Print Visuals (8 cr), or 33 × 5-Slide Packs (3 cr)',
-      'Live Perplexity Sonar & Google Search fact citations baked into every diagram',
-      'Solo Kore TTS + 2-Speaker Executive Dialogue (Kore × Fenrir) in 24kHz WAV',
-      'Persistent Workspace Gallery & Custom Brand Style Vault in Upstash Redis',
-    ],
-    ctaLabel: 'Top Up 100 Credits ($19)',
-    ctaHref: 'https://www.frankx.ai/waitlist?intent=infogenius-pro&sku=infogenius-credits-100',
-  },
-  {
-    name: 'InfoGenius Pro Visual Knowledge OS',
-    price: '$49',
-    period: 'One-Time License + 350 Managed Credits',
-    unitCost: '$0.70 per 2K Infographic + Full Local CLI & MCP Plugin',
-    badge: 'Most Popular · 70 × 2K Visuals + Code Plugin',
-    highlight: true,
-    outputs: [
-      '350 Managed Vercel AI Gateway Credits (70 × 2K Infographics or 43 × 4K Print Visuals)',
-      'Standalone Claude Code, Cursor & Antigravity Plugin (plugins/infogenius-visual-os/)',
-      '6-Tool MCP Server + OpenAPI 3.1 REST endpoint (/api/byok/infogenius?format=openapi)',
-      'All 26 Brand Presets across FrankX, Starlight (SIP), GenCreator Territory B & Arcanea',
-      'Batch Markdown-to-5-Slide Carousel CLI (scripts/infogenius.mjs --from-file) + Veo 3.1 motion support',
-    ],
-    ctaLabel: 'Get Pro OS + 350 Credits ($49)',
-    ctaHref: 'https://www.frankx.ai/products/infogenius-pro',
-  },
-  {
-    name: 'Agency & Content Team OS',
-    price: '$129',
-    period: 'Multi-Seat Team Workspace + 1,000 Credits',
-    unitCost: '$0.64 per 2K Grounded Infographic',
-    badge: '200 × 2K Visuals · Multi-Brand Vault',
-    highlight: false,
-    outputs: [
-      '1,000 Managed Vercel AI Gateway Credits (200 × 2K Infographics or 125 × 4K Print Visuals)',
-      'Shared Multi-Tenant Team Workspace ID (X-Tenant-Id) across web and CLI agents',
-      'Unlimited Custom Brand Style Presets persisted in your team Redis vault',
-      'Full Claude Code / Cursor / Antigravity MCP Server + CI/CD provenance verification',
-      'Priority onboarding for custom brand pack calibration',
-    ],
-    ctaLabel: 'Get Agency Team Pack ($129)',
-    ctaHref: 'https://www.frankx.ai/waitlist?intent=infogenius-pro&sku=infogenius-team-1000',
-  },
-];
+- Mechanical checks run as deterministic scripts before any model is called.
+- Each visual and code output records the prompt, model and sources it came from.`;
 
 const App: React.FC = () => {
-  const [activeMode, setActiveMode] = useState<'studio' | 'carousel' | 'brand' | 'mcp' | 'offers'>('studio');
+  const [activeMode, setActiveMode] = useState<'studio' | 'carousel' | 'brand' | 'mcp'>('studio');
   const [activeBrandWorld, setActiveBrandWorld] = useState<BrandWorld>('frankx');
   const [canvasView, setCanvasView] = useState<'hud' | 'raster' | 'svg'>('hud');
   const [showIntro, setShowIntro] = useState(false);
@@ -301,7 +230,7 @@ const App: React.FC = () => {
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('16:9');
   const [imageSize, setImageSize] = useState<ImageResolution>('2K');
   const [complexityLevel, setComplexityLevel] = useState<ComplexityLevel>('College');
-  const [visualStyle, setVisualStyle] = useState<VisualStyle>('Glassmorphic');
+  const [visualStyle, setVisualStyle] = useState<VisualStyle>(BRAND_WORLDS[0].defaultStyle);
   const [language] = useState<Language>('English');
 
   const [isLoading, setIsLoading] = useState(false);
@@ -335,7 +264,7 @@ const App: React.FC = () => {
   const [brandKey, setBrandKey] = useState('custom/sovereign-glass');
   const [brandName, setBrandName] = useState('Sovereign Crystal & Gold');
   const [brandVoidHex, setBrandVoidHex] = useState('#0b0e14');
-  const [brandPrimaryHex, setBrandPrimaryHex] = useState('#7fffd4');
+  const [brandPrimaryHex, setBrandPrimaryHex] = useState('#10b981');
   const [brandSecondaryHex, setBrandSecondaryHex] = useState('#ffd700');
   const [brandTextHex, setBrandTextHex] = useState('#ffffff');
   const [brandMaterial, setBrandMaterial] = useState(
@@ -449,7 +378,7 @@ const App: React.FC = () => {
     } catch (err: any) {
       console.error(err);
       if (err.message?.includes('permission') || err.message?.includes('403') || err.message?.includes('API key')) {
-        setError('API Key Required: Click "Configure API Key" in the sidebar or use the Multi-Tenant Studio on frankx.ai/infogenius.');
+        setError('API Key Required: Click "Configure API Key" in the sidebar and paste your own Gemini key.');
         setShowKeyModal(true);
       } else {
         setError(err.message || 'Engine failure. Check API key/billing.');
@@ -537,20 +466,16 @@ const App: React.FC = () => {
     const roles = [
       { role: 'Slide 01 · Hero Thesis', title: docTitle },
       { role: 'Slide 02 · Problem & Bottleneck', title: headings[1] || `${docTitle}: Core Bottlenecks` },
-      { role: 'Slide 03 · 6-Layer Architecture', title: headings[2] || `${docTitle}: System Topology` },
-      { role: 'Slide 04 · Verification & Proof', title: headings[3] || `${docTitle}: Telemetry & Proof` },
+      { role: 'Slide 03 · Architecture', title: headings[2] || `${docTitle}: System Topology` },
+      { role: 'Slide 04 · Evidence', title: headings[3] || `${docTitle}: Evidence` },
       { role: 'Slide 05 · Action Blueprint', title: `${docTitle}: Implementation Checklist` },
     ];
+    // Bullets are split across the slides in order, without repeats; a slide
+    // with no source bullets stays empty rather than inventing claims.
+    const perSlide = Math.max(1, Math.ceil(bullets.length / roles.length));
     return roles.map((r, idx) => {
-      const slideFacts = bullets.slice(idx * 2, idx * 2 + 3);
-      if (slideFacts.length === 0) {
-        slideFacts.push(
-          `Key architectural mechanism for ${r.title}`,
-          `Verified telemetry and production guardrails`,
-          `Zero-Orphan provenance and deterministic verification`
-        );
-      }
-      const cli = `node scripts/infogenius.mjs "${r.title.replace(/"/g, '\\"')}" --style ${visualStyle.toLowerCase()} --aspect 1:1 --size 2K`;
+      const slideFacts = bullets.slice(idx * perSlide, (idx + 1) * perSlide);
+      const cli = `/infogenius "${r.title.replace(/"/g, '\\"')}" --pack ${activeBrandWorld} --aspect 1:1`;
       return {
         slideNumber: idx + 1,
         role: r.role,
@@ -559,7 +484,7 @@ const App: React.FC = () => {
         cli,
       };
     });
-  }, [articleText, visualStyle]);
+  }, [articleText, activeBrandWorld]);
 
   const customPresetJson = {
     key: brandKey,
@@ -578,7 +503,16 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col md:flex-row font-sans overflow-hidden">
       {showKeyModal && (
-        <div className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div
+          className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="byok-dialog-title"
+          aria-describedby="byok-dialog-description"
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setShowKeyModal(false);
+          }}
+        >
           <form
             onSubmit={handleSaveCustomKey}
             className="max-w-md w-full bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-cyan-500/40 shadow-2xl space-y-5"
@@ -589,7 +523,7 @@ const App: React.FC = () => {
                   <Key className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold dark:text-white">Connect Gemini API Key</h3>
+                  <h3 id="byok-dialog-title" className="text-lg font-bold dark:text-white">Connect Gemini API Key</h3>
                   <p className="text-xs text-slate-400">Stored locally in your browser (BYOK)</p>
                 </div>
               </div>
@@ -601,20 +535,18 @@ const App: React.FC = () => {
                 Close
               </button>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Paste your Google AI Studio <code className="text-cyan-400">GEMINI_API_KEY</code> to generate live 2K/4K visuals, Veo 3.1 motion loops, and Kore TTS audio, or use{' '}
-              <a
-                href="https://www.frankx.ai/infogenius#studio"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-cyan-400 underline font-semibold"
-              >
-                frankx.ai/infogenius
-              </a>{' '}
-              with 15 Free Managed Workspace Credits.
+            <p id="byok-dialog-description" className="text-xs text-slate-400 leading-relaxed">
+              Paste your Google AI Studio <code className="text-cyan-400">GEMINI_API_KEY</code> to generate 2K/4K visuals, Veo motion and narration.
+              The key stays in this browser's local storage, and the app sends it only to Google's API. The vector blueprint works without a key.
             </p>
+            <label htmlFor="byok-key-input" className="sr-only">
+              Gemini API key
+            </label>
             <input
+              id="byok-key-input"
               type="password"
+              autoComplete="off"
+              autoFocus
               value={customApiKey}
               onChange={(e) => setCustomApiKey(e.target.value)}
               placeholder="Paste GEMINI_API_KEY..."
@@ -641,7 +573,10 @@ const App: React.FC = () => {
       )}
 
       {/* Workspace Sidebar */}
-      <aside className="w-full md:w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-white/5 flex flex-col z-50">
+      <aside
+        inert={showKeyModal}
+        className="w-full md:w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-white/5 flex flex-col z-50"
+      >
         <div className="p-5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-cyan-500 fill-current" />
@@ -655,7 +590,9 @@ const App: React.FC = () => {
             </div>
           </div>
           <button
+            type="button"
             onClick={() => setIsDarkMode(!isDarkMode)}
+            aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
             className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500"
           >
             {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -665,7 +602,7 @@ const App: React.FC = () => {
         {/* 4 Sovereign Brand World Lens Selector */}
         <div className="p-3 border-b border-slate-200 dark:border-white/5 space-y-1.5">
           <div className="px-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-            Sovereign Brand Lens
+            Style pack
           </div>
           <div className="grid grid-cols-2 gap-1.5">
             {BRAND_WORLDS.map((bw) => (
@@ -730,23 +667,13 @@ const App: React.FC = () => {
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Code2 className="w-3.5 h-3.5" /> 4. MCP &amp; API
-          </button>
-          <button
-            onClick={() => setActiveMode('offers')}
-            className={`col-span-2 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
-              activeMode === 'offers'
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                : 'text-slate-400 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <CreditCard className="w-3.5 h-3.5" /> 5. Offers, Unit Economics &amp; Value
+            <Code2 className="w-3.5 h-3.5" /> 4. Skill &amp; MCP
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           <div className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            Verified 2K Gallery &amp; History
+            Gallery &amp; history
           </div>
           {assets.map((asset, idx) => (
             <button
@@ -782,18 +709,18 @@ const App: React.FC = () => {
             <Key className="w-3.5 h-3.5" /> {customApiKey ? 'BYOK Key Active' : 'Configure API Key'}
           </button>
           <a
-            href="https://www.frankx.ai/infogenius"
+            href="https://github.com/frankxai/infogenius"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full flex items-center justify-center gap-1.5 py-2 text-[11px] font-semibold text-slate-400 hover:text-white transition-colors"
           >
-            FrankX Multi-Tenant Platform <ExternalLink className="w-3 h-3" />
+            Source, skill and style packs <ExternalLink className="w-3 h-3" aria-hidden="true" />
           </a>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col relative h-screen overflow-hidden">
+      <main inert={showKeyModal} className="flex-1 flex flex-col relative h-screen overflow-hidden">
         {showIntro && <IntroScreen onComplete={() => setShowIntro(false)} />}
 
         <header className="min-h-16 py-2 border-b border-slate-200 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl flex flex-wrap items-center px-6 justify-between gap-2 z-40">
@@ -804,10 +731,8 @@ const App: React.FC = () => {
                 : activeMode === 'carousel'
                   ? 'Article / Markdown → 5-Slide Executive Carousel Decomposer'
                   : activeMode === 'brand'
-                    ? 'Custom Brand Style DNA Builder (infogenius-presets.json)'
-                    : activeMode === 'mcp'
-                      ? 'MCP Server, Vercel AI SDK v6 & OpenAPI 3.1 Hub'
-                      : 'InfoGenius v5.3 Offers, Unit Economics, E2E Workflows & Outputs'}
+                    ? 'Custom brand style builder'
+                    : 'Use InfoGenius from your own agent'}
             </h2>
             {activeMode === 'studio' && assets[currentIndex] && (
               <span className="rounded-full bg-cyan-500/15 border border-cyan-500/30 px-2.5 py-0.5 text-[10px] font-bold text-cyan-300">
@@ -879,14 +804,6 @@ const App: React.FC = () => {
                 </button>
               </>
             )}
-            <a
-              href="https://www.frankx.ai/products/infogenius-pro"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 text-xs font-bold flex items-center gap-1"
-            >
-              Pro OS ($49) <ExternalLink className="w-3 h-3" />
-            </a>
           </div>
         </header>
 
@@ -902,7 +819,7 @@ const App: React.FC = () => {
                   <div className="rounded-2xl border border-white/10 bg-slate-900/75 p-4 flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">
-                        Active Sovereign Brand World · {currentBrandLens.name}
+                        Style pack · {currentBrandLens.name}
                       </span>
                       <p className="text-xs text-slate-300 mt-0.5">{currentBrandLens.whyBuyersPay}</p>
                     </div>
@@ -966,8 +883,8 @@ const App: React.FC = () => {
                       {canvasView === 'hud' && assets[currentIndex].facts?.length > 0 && (
                         <div className="rounded-2xl border border-cyan-500/25 bg-slate-950/90 p-4">
                           <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-cyan-400 mb-2.5">
-                            <span>Anti-Slop Code-Overlay HUD · Verified Node Callouts</span>
-                            <span>Built on SIP</span>
+                            <span>Facts from the research step</span>
+                            <span>Check the sources below</span>
                           </div>
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                             {assets[currentIndex].facts.slice(0, 3).map((fact, idx) => (
@@ -976,7 +893,7 @@ const App: React.FC = () => {
                                 className="rounded-xl border border-white/10 bg-slate-900/80 p-3 text-xs text-slate-200"
                               >
                                 <div className="text-[10px] font-mono font-bold text-cyan-400 mb-1">
-                                  NODE 0{idx + 1} · VERIFIED
+                                  Fact 0{idx + 1}
                                 </div>
                                 <p className="text-[11px] leading-snug">{fact}</p>
                               </div>
@@ -1089,106 +1006,78 @@ const App: React.FC = () => {
         {/* MODE 4: MCP SERVER, VERCEL AI SDK & OPENAPI 3.1 HUB */}
         {activeMode === 'mcp' && (
           <div className="flex-1 overflow-y-auto p-8">
-            <div className="max-w-5xl mx-auto space-y-6 pb-16">
-              <div className="rounded-2xl border border-white/10 bg-slate-900/75 p-6 flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-teal-400">
-                    Agent-Native Visual Intelligence Substrate
-                  </span>
-                  <h3 className="text-xl font-bold text-white mt-1">
-                    Connect InfoGenius v5.3 to Claude Code, Cursor, Antigravity &amp; Next.js
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Active Brand World: <strong className="text-white">{currentBrandLens.name}</strong> · Active Style: <code className="text-cyan-300">{visualStyle}</code>
-                  </p>
-                </div>
-                <a
-                  href="https://www.frankx.ai/api/byok/infogenius?format=openapi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-xl border border-teal-400/40 bg-teal-500/10 text-xs font-bold text-teal-200 flex items-center gap-1.5"
-                >
-                  OpenAPI 3.1 Spec (JSON) <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+            <div className="max-w-3xl mx-auto space-y-6 pb-16">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Run InfoGenius inside your own agent</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                  The same research-then-render flow ships as a Claude Code skill and an MCP server. Both use your own Gemini key.
+                  The current style pack is <strong>{currentBrandLens.name}</strong>.
+                </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase text-cyan-300">
-                      1. Claude Code / Cursor / Antigravity .mcp.json
-                    </span>
-                    <button
-                      onClick={() =>
-                        copyToClipboard(
-                          'mcp-cfg',
-                          JSON.stringify(
-                            {
-                              mcpServers: {
-                                'infogenius-visual-os': {
-                                  command: 'node',
-                                  args: ['scripts/infogenius-mcp-server.mjs'],
-                                  env: {
-                                    INFOGENIUS_DEFAULT_BRAND: activeBrandWorld,
-                                    INFOGENIUS_DEFAULT_STYLE: visualStyle.toLowerCase(),
-                                  },
-                                },
-                              },
-                            },
-                            null,
-                            2
-                          )
-                        )
-                      }
-                      className="px-3 py-1 rounded-lg bg-white/5 text-xs text-white flex items-center gap-1"
-                    >
-                      {copiedId === 'mcp-cfg' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                      Copy .mcp.json
-                    </button>
-                  </div>
-                  <pre className="rounded-xl bg-slate-950 border border-white/10 p-3.5 text-[11px] font-mono text-cyan-200 overflow-x-auto">
-                    {JSON.stringify(
+              {[
+                {
+                  id: 'skill',
+                  title: '1. Claude Code skill',
+                  body: 'Copy the skill into your Claude Code skills folder, then call it with a style pack.',
+                  code: [
+                    'git clone https://github.com/frankxai/infogenius',
+                    'cp -r infogenius/.claude/skills/infogenius ~/.claude/skills/',
+                    `/infogenius "${(topic || 'How retrieval-augmented generation works').replace(/"/g, '\\"')}" --pack ${activeBrandWorld}`,
+                  ].join('\n'),
+                },
+                {
+                  id: 'mcp',
+                  title: '2. MCP server (Claude Code, Cursor, any MCP client)',
+                  body: 'Not on npm yet. Build it from source, then point your client at the built file.',
+                  code: [
+                    'git clone https://github.com/frankxai/arcanea-infogenius',
+                    'cd arcanea-infogenius/mcp-server && npm ci && npm run build',
+                    '',
+                    JSON.stringify(
                       {
                         mcpServers: {
-                          'infogenius-visual-os': {
+                          infogenius: {
                             command: 'node',
-                            args: ['scripts/infogenius-mcp-server.mjs'],
-                            env: {
-                              INFOGENIUS_DEFAULT_BRAND: activeBrandWorld,
-                              INFOGENIUS_DEFAULT_STYLE: visualStyle.toLowerCase(),
-                            },
+                            args: ['/absolute/path/to/arcanea-infogenius/mcp-server/dist/index.js'],
+                            env: { GEMINI_API_KEY: '<your key>' },
                           },
                         },
                       },
                       null,
                       2
-                    )}
-                  </pre>
-                </div>
-
-                <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase text-violet-300">
-                      2. Multi-Tenant REST API (cURL)
-                    </span>
+                    ),
+                  ].join('\n'),
+                },
+              ].map((block) => (
+                <section
+                  key={block.id}
+                  aria-labelledby={`install-${block.id}`}
+                  className="rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/60 p-5 space-y-3"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <h4 id={`install-${block.id}`} className="text-sm font-bold text-slate-900 dark:text-white">
+                      {block.title}
+                    </h4>
                     <button
-                      onClick={() =>
-                        copyToClipboard(
-                          'curl-cfg',
-                          `curl -X POST https://www.frankx.ai/api/byok/infogenius \\\n  -H "Content-Type: application/json" \\\n  -d '{"action":"generate","topic":"${(topic || 'Sovereign AI Swarm Architecture').replace(/"/g, '\\"')}","style":"${visualStyle.toLowerCase()}","imageSize":"${imageSize}"}'`
-                        )
-                      }
-                      className="px-3 py-1 rounded-lg bg-white/5 text-xs text-white flex items-center gap-1"
+                      type="button"
+                      onClick={() => copyToClipboard(`install-${block.id}`, block.code)}
+                      className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-white/5 text-xs text-slate-700 dark:text-white flex items-center gap-1"
                     >
-                      {copiedId === 'curl-cfg' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                      Copy cURL
+                      {copiedId === `install-${block.id}` ? (
+                        <Check className="w-3 h-3 text-emerald-500" aria-hidden="true" />
+                      ) : (
+                        <Copy className="w-3 h-3" aria-hidden="true" />
+                      )}
+                      {copiedId === `install-${block.id}` ? 'Copied' : 'Copy'}
                     </button>
                   </div>
-                  <pre className="rounded-xl bg-slate-950 border border-white/10 p-3.5 text-[11px] font-mono text-violet-200 overflow-x-auto">
-                    {`curl -X POST https://www.frankx.ai/api/byok/infogenius \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "action": "generate",\n    "topic": "${(topic || 'Sovereign AI Swarm Architecture').replace(/"/g, '\\"')}",\n    "style": "${visualStyle.toLowerCase()}",\n    "imageSize": "${imageSize}"\n  }'`}
+                  <p className="text-xs text-slate-600 dark:text-slate-300">{block.body}</p>
+                  <pre className="rounded-xl bg-slate-950 border border-white/10 p-3.5 text-[11px] font-mono text-slate-100 overflow-x-auto whitespace-pre">
+                    {block.code}
                   </pre>
-                </div>
-              </div>
+                </section>
+              ))}
             </div>
           </div>
         )}
@@ -1289,7 +1178,7 @@ const App: React.FC = () => {
                     Custom Brand Style Pack Builder (<code>infogenius-presets.json</code>)
                   </h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    Lock your team&apos;s hex palette and material physics into a reusable preset for the Web Studio, local CLI, and Claude Code / Cursor MCP Server.
+                    Lock your team&apos;s hex palette and material physics into a reusable preset for this studio, the Claude Code skill and the MCP server.
                   </p>
                 </div>
 
@@ -1380,89 +1269,6 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* MODE 5: OFFERS, COSTS, UNIT ECONOMICS & E2E WORKFLOWS */}
-        {activeMode === 'offers' && (
-          <div className="flex-1 overflow-y-auto p-8">
-            <div className="max-w-6xl mx-auto space-y-8 pb-16">
-              {/* Unit Economics Comparison */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5">
-                  <div className="text-xs font-bold uppercase text-slate-400">
-                    Traditional Design Agency
-                  </div>
-                  <div className="text-2xl font-black text-white mt-1">$150 – $400 / visual</div>
-                  <p className="text-xs text-slate-400 mt-2">
-                    2–4 days turnaround · Manual fact checking · Static raster file with no CLI automation or provenance sidecar.
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5">
-                  <div className="text-xs font-bold uppercase text-slate-400">
-                    Raw ChatGPT / Midjourney
-                  </div>
-                  <div className="text-2xl font-black text-white mt-1">$20 / mo + 45 mins</div>
-                  <p className="text-xs text-slate-400 mt-2">
-                    Hallucinated numbers · Misspelled labels · Inconsistent brand colors · No 5-slide Markdown decomposer or MCP server.
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-cyan-400/50 bg-cyan-500/10 p-5">
-                  <div className="text-xs font-bold uppercase text-cyan-300">
-                    InfoGenius v5.3 Visual Knowledge OS
-                  </div>
-                  <div className="text-2xl font-black text-white mt-1">$0.64 – $0.95 / 2K visual</div>
-                  <p className="text-xs text-cyan-100/80 mt-2">
-                    ~18 seconds · Live Perplexity Sonar &amp; Google Search citations · 4 Brand Worlds · Vector SVG + 2-Speaker Dialogue TTS.
-                  </p>
-                </div>
-              </div>
-
-              {/* 4 Offer Tiers */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {OFFER_TIERS.map((tier) => (
-                  <div
-                    key={tier.name}
-                    className={`rounded-2xl border p-5 flex flex-col justify-between ${
-                      tier.highlight
-                        ? 'border-cyan-400 bg-slate-900 shadow-xl shadow-cyan-500/10'
-                        : 'border-white/10 bg-slate-900/60'
-                    }`}
-                  >
-                    <div className="space-y-3">
-                      <span className="inline-block rounded-full bg-amber-500/15 border border-amber-400/30 px-2.5 py-0.5 text-[10px] font-bold uppercase text-amber-300">
-                        {tier.badge}
-                      </span>
-                      <div>
-                        <h4 className="text-base font-bold text-white">{tier.name}</h4>
-                        <div className="text-3xl font-black text-white mt-1">{tier.price}</div>
-                        <div className="text-[11px] text-slate-400">{tier.period}</div>
-                        <div className="text-xs font-bold text-cyan-400 mt-1">{tier.unitCost}</div>
-                      </div>
-                      <ul className="space-y-2 pt-3 border-t border-white/10 text-xs text-slate-300">
-                        {tier.outputs.map((out, i) => (
-                          <li key={i} className="flex gap-2">
-                            <span className="text-cyan-400 font-bold">✓</span>
-                            <span>{out}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <a
-                      href={tier.ctaHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`mt-5 w-full py-2.5 rounded-xl text-xs font-bold text-center block ${
-                        tier.highlight
-                          ? 'bg-cyan-500 hover:bg-cyan-400 text-slate-950'
-                          : 'border border-white/15 bg-white/5 text-white hover:bg-white/10'
-                      }`}
-                    >
-                      {tier.ctaLabel} ↗
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </main>
     </div>
   );

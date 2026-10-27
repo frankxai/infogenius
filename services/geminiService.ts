@@ -5,6 +5,7 @@
 */
 import { GoogleGenAI, Modality } from "@google/genai";
 import { AspectRatio, ComplexityLevel, VisualStyle, ResearchResult, SearchResultItem, Language, ImageResolution, BrandWorld } from "../types";
+import { STYLE_PACK_COLORS } from "./stylePacks";
 
 // Helper to get instructions for complexity
 const getLevelInstruction = (level: ComplexityLevel): string => {
@@ -66,30 +67,11 @@ export const buildInteractiveSvgBlueprint = (params: {
   brandWorld?: BrandWorld;
 }): string => {
   const { topic, facts, style, brandWorld = 'frankx' } = params;
-  const isLight = style === 'GenCreator Editorial';
-  const bgHex = isLight ? '#FBF9F5' : '#080C14';
-  const cardBg = isLight ? '#F3EFE6' : '#0F1624';
-  const textHex = isLight ? '#221F1B' : '#F8FAFC';
-  const mutedHex = isLight ? '#6E665E' : '#94A3B8';
-  const primaryHex =
-    brandWorld === 'starlight'
-      ? '#00E5FF'
-      : brandWorld === 'gencreator'
-        ? '#C8322A'
-        : brandWorld === 'arcanea'
-          ? '#FFD700'
-          : '#14B8A6';
-  const secondaryHex =
-    brandWorld === 'starlight'
-      ? '#8B5CF6'
-      : brandWorld === 'gencreator'
-        ? '#D97706'
-        : brandWorld === 'arcanea'
-          ? '#00BCD4'
-          : '#F59E0B';
+  const { ground, ink, line, spot } = STYLE_PACK_COLORS[brandWorld];
 
   const safeTitle = escapeXml(topic.slice(0, 74));
-  const safeFacts = (facts.length ? facts : ['Fact 1: Verified architecture', 'Fact 2: Deterministic provenance']).slice(0, 4);
+  // No research facts means no cards; the blueprint never invents content.
+  const safeFacts = facts.slice(0, 4);
 
   const cardsSvg = safeFacts
     .map((fact, idx) => {
@@ -102,31 +84,25 @@ export const buildInteractiveSvgBlueprint = (params: {
       const line3 = escapeXml(fact.slice(124, 182));
       return `
       <g transform="translate(${x}, ${y})">
-        <rect width="520" height="160" rx="18" fill="${cardBg}" stroke="${primaryHex}" stroke-opacity="0.4" stroke-width="1.5" />
-        <circle cx="34" cy="36" r="14" fill="${primaryHex}" fill-opacity="0.18" stroke="${primaryHex}" stroke-width="1.2" />
-        <text x="34" y="41" text-anchor="middle" fill="${primaryHex}" font-family="ui-monospace, monospace" font-size="12" font-weight="700">0${idx + 1}</text>
-        <text x="60" y="41" fill="${secondaryHex}" font-family="ui-monospace, monospace" font-size="11" font-weight="700" letter-spacing="1.4">VERIFIED ARCHITECTURE NODE 0${idx + 1}</text>
-        <text x="26" y="76" fill="${textHex}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line1}</text>
-        <text x="26" y="100" fill="${textHex}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line2}</text>
-        <text x="26" y="124" fill="${mutedHex}" font-family="system-ui, sans-serif" font-size="13">${line3}</text>
+        <rect width="520" height="160" rx="18" fill="${ink}" fill-opacity="0.04" stroke="${line}" stroke-opacity="0.4" stroke-width="1.5" />
+        <circle cx="34" cy="36" r="14" fill="none" stroke="${line}" stroke-width="1.2" />
+        <text x="34" y="41" text-anchor="middle" fill="${line}" font-family="ui-monospace, monospace" font-size="12" font-weight="700">0${idx + 1}</text>
+        <text x="60" y="41" fill="${ink}" fill-opacity="0.7" font-family="ui-monospace, monospace" font-size="11" font-weight="700" letter-spacing="1.4">FACT 0${idx + 1}</text>
+        <text x="26" y="76" fill="${ink}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line1}</text>
+        <text x="26" y="100" fill="${ink}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line2}</text>
+        <text x="26" y="124" fill="${ink}" fill-opacity="0.65" font-family="system-ui, sans-serif" font-size="13">${line3}</text>
       </g>`;
     })
     .join('\n');
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="100%" height="100%">
-  <defs>
-    <radialGradient id="igGlow" cx="50%" cy="15%" r="65%">
-      <stop offset="0%" stop-color="${primaryHex}" stop-opacity="0.18" />
-      <stop offset="100%" stop-color="${bgHex}" stop-opacity="0" />
-    </radialGradient>
-  </defs>
-  <rect width="1200" height="675" fill="${bgHex}" />
-  <rect width="1200" height="675" fill="url(#igGlow)" />
-  <text x="60" y="64" fill="${primaryHex}" font-family="ui-monospace, monospace" font-size="12" font-weight="700" letter-spacing="2.2">INFOGENIUS v5.3 VECTOR BLUEPRINT · ${escapeXml(brandWorld.toUpperCase())} · ${escapeXml(style.toUpperCase())}</text>
-  <text x="60" y="108" fill="${textHex}" font-family="system-ui, sans-serif" font-size="30" font-weight="800">${safeTitle}</text>
-  <line x1="60" y1="145" x2="1140" y2="145" stroke="${primaryHex}" stroke-opacity="0.3" stroke-width="1.5" />
+  <rect width="1200" height="675" fill="${ground}" />
+  <text x="60" y="64" fill="${line}" font-family="ui-monospace, monospace" font-size="12" font-weight="700" letter-spacing="2.2">INFOGENIUS VECTOR BLUEPRINT · ${escapeXml(brandWorld.toUpperCase())} · ${escapeXml(style.toUpperCase())}</text>
+  <text x="60" y="108" fill="${ink}" font-family="system-ui, sans-serif" font-size="30" font-weight="800">${safeTitle}</text>
+  <line x1="60" y1="145" x2="1140" y2="145" stroke="${line}" stroke-opacity="0.3" stroke-width="1.5" />
   ${cardsSvg}
-  <text x="60" y="635" fill="${mutedHex}" font-family="ui-monospace, monospace" font-size="11">ANTI-SLOP CODE OVERLAY · BUILT ON SIP · ZERO SPELLING ERRORS</text>
+  <rect x="60" y="626" width="10" height="10" fill="${spot}" />
+  <text x="80" y="635" fill="${ink}" fill-opacity="0.7" font-family="ui-monospace, monospace" font-size="11">SOURCE: FACTS FROM THE RESEARCH STEP. CHECK EACH ONE AGAINST ITS LINK.</text>
 </svg>`;
 };
 
@@ -275,7 +251,14 @@ export const generateInfographicVideo = async (prompt: string, aspectRatio: Aspe
   }
 
   const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-  const res = await fetch(`${downloadLink}&key=${activeKey}`);
+  if (!downloadLink) throw new Error('Veo returned no video to download.');
+  // The key travels only to Google's API host, in a header rather than the URL.
+  const url = new URL(downloadLink);
+  if (url.protocol !== 'https:' || url.hostname !== 'generativelanguage.googleapis.com') {
+    throw new Error(`Refusing to send the API key to unexpected host ${url.hostname}.`);
+  }
+  const res = await fetch(url, { headers: { 'x-goog-api-key': activeKey } });
+  if (!res.ok) throw new Error(`Video download failed with HTTP ${res.status}.`);
   const blob = await res.blob();
   return URL.createObjectURL(blob);
 };
