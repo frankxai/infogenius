@@ -21,11 +21,11 @@ const getLevelInstruction = (level: ComplexityLevel): string => {
 // Helper to get instructions for visual style
 const getStyleInstruction = (style: VisualStyle): string => {
   switch (style) {
-    case 'Glassmorphic': return "Premium 3D Glassmorphic Infographic. Dark void background (#0b0e14). All information displayed on frosted translucent glass panels floating at different depths. Key concepts rendered as 3D crystal/glass nodes connected by thin luminous teal (#7fffd4) threads. Dramatic directional spotlight from upper-left creating teal rim lighting on all glass surfaces. Gold (#ffd700) accents on highlights. Clean white sans-serif labels on every element.";
-    case 'Premium': return "Luxury tech-brand visual. Apple meets Dior meets DeepMind. Dark void background (#0b0e14). One striking crystal/glass focal element at center with dramatic volumetric lighting. Data and labels on frosted glass cards orbiting the focal point. Thin luminous teal (#7fffd4) connection threads forming constellation pattern. Gold (#ffd700) warm accent highlights.";
+    case 'Glassmorphic': return "Premium 3D Glassmorphic Infographic. Dark void background (#0b0e14). All information displayed on frosted translucent glass panels floating at different depths. Key concepts rendered as 3D crystal/glass nodes connected by thin luminous teal threads. Dramatic directional spotlight from upper-left creating teal rim lighting on all glass surfaces. Gold (#ffd700) accents on highlights. Clean white sans-serif labels on every element.";
+    case 'Premium': return "Luxury tech-brand visual. Apple meets Dior meets DeepMind. Dark void background (#0b0e14). One striking crystal/glass focal element at center with dramatic volumetric lighting. Data and labels on frosted glass cards orbiting the focal point. Thin luminous teal connection threads forming constellation pattern. Gold (#ffd700) warm accent highlights.";
     case 'Starlight Cosmos': return "Starlight Intelligence Systems Neural Cosmos Infographic. Deep navy void background (#050B14). Crystalline astrolabe nodes connected by cyber-cyan (#00E5FF) and frontier-violet (#8B5CF6) optical conduits. Key human governance gates in warm Starlight Gold (#FCD34D). Crisp Instrument Sans and IBM Plex Mono typography.";
     case 'GenCreator Editorial': return "GenCreator Territory B Editorial Print Infographic. Warm archival paper background (#FBF9F5) with ultra-crisp deep carbon ink (#221F1B) hairline Swiss grid, technical diagrams, and editorial typography. Selective Spot Red (#C8322A) accent for edition stamps and focal flow.";
-    case 'Arcanea Sacred Geometry': return "Arcanea Sacred Geometry Codex Infographic. Deep cosmic void background (#0B0E14). Golden-ratio astrolabe rings and sacred geometric polyhedra in luminous Arcanean Gold (#FFD700) and Atlantean Teal (#00BCD4) with aquamarine (#7FFFD4) harmonic nodes.";
+    case 'Arcanea Sacred Geometry': return "Arcanea Sacred Geometry Codex Infographic. Deep Cosmic Blue background (#0D47A1). Golden-ratio astrolabe rings and sacred geometric polyhedra in luminous Arcanean Gold (#FFD700) with Atlantean Teal (#00BCD4) harmonic nodes.";
     case 'Da Vinci Blueprint': return "Leonardo da Vinci notebook style on dark obsidian parchment (#0a0f1c), warm sepia and gold ink sketches (#f59e0b, #fbbf24) with cyan callout lines (#06b6d4), technical diagrams, exploded views, and crisp architectural annotations.";
     case 'Minimalist': return "Bauhaus minimalist, flat vector, clean geometry, negative space.";
     case 'Realistic': return "8k photorealistic, cinematic lighting, ultra-detailed textures.";
@@ -86,23 +86,23 @@ export const buildInteractiveSvgBlueprint = (params: {
       <g transform="translate(${x}, ${y})">
         <rect width="520" height="160" rx="18" fill="${ink}" fill-opacity="0.04" stroke="${line}" stroke-opacity="0.4" stroke-width="1.5" />
         <circle cx="34" cy="36" r="14" fill="none" stroke="${line}" stroke-width="1.2" />
-        <text x="34" y="41" text-anchor="middle" fill="${line}" font-family="ui-monospace, monospace" font-size="12" font-weight="700">0${idx + 1}</text>
-        <text x="60" y="41" fill="${ink}" fill-opacity="0.7" font-family="ui-monospace, monospace" font-size="11" font-weight="700" letter-spacing="1.4">FACT 0${idx + 1}</text>
+        <text x="34" y="41" text-anchor="middle" fill="${ink}" font-family="ui-monospace, monospace" font-size="12" font-weight="700">0${idx + 1}</text>
+        <text x="60" y="41" fill="${ink}" fill-opacity="0.85" font-family="ui-monospace, monospace" font-size="11" font-weight="700" letter-spacing="1.4">FACT 0${idx + 1}</text>
         <text x="26" y="76" fill="${ink}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line1}</text>
         <text x="26" y="100" fill="${ink}" font-family="system-ui, sans-serif" font-size="14" font-weight="500">${line2}</text>
-        <text x="26" y="124" fill="${ink}" fill-opacity="0.65" font-family="system-ui, sans-serif" font-size="13">${line3}</text>
+        <text x="26" y="124" fill="${ink}" fill-opacity="0.85" font-family="system-ui, sans-serif" font-size="13">${line3}</text>
       </g>`;
     })
     .join('\n');
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="100%" height="100%">
   <rect width="1200" height="675" fill="${ground}" />
-  <text x="60" y="64" fill="${line}" font-family="ui-monospace, monospace" font-size="12" font-weight="700" letter-spacing="2.2">INFOGENIUS VECTOR BLUEPRINT · ${escapeXml(brandWorld.toUpperCase())} · ${escapeXml(style.toUpperCase())}</text>
+  <text x="60" y="64" fill="${ink}" fill-opacity="0.85" font-family="ui-monospace, monospace" font-size="12" font-weight="700" letter-spacing="2.2">INFOGENIUS VECTOR BLUEPRINT · ${escapeXml(brandWorld.toUpperCase())} · ${escapeXml(style.toUpperCase())}</text>
   <text x="60" y="108" fill="${ink}" font-family="system-ui, sans-serif" font-size="30" font-weight="800">${safeTitle}</text>
   <line x1="60" y1="145" x2="1140" y2="145" stroke="${line}" stroke-opacity="0.3" stroke-width="1.5" />
   ${cardsSvg}
   <rect x="60" y="626" width="10" height="10" fill="${spot}" />
-  <text x="80" y="635" fill="${ink}" fill-opacity="0.7" font-family="ui-monospace, monospace" font-size="11">SOURCE: FACTS FROM THE RESEARCH STEP. CHECK EACH ONE AGAINST ITS LINK.</text>
+  <text x="80" y="635" fill="${ink}" fill-opacity="0.85" font-family="ui-monospace, monospace" font-size="11">SOURCE: FACTS FROM THE RESEARCH STEP. CHECK EACH ONE AGAINST ITS LINK.</text>
 </svg>`;
 };
 
