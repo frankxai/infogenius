@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "App.tsx"
+        ],
+        "createdAt": "2026-10-29T12:41:40.777Z",
+        "reason": "Claude, 2026-10-29: measured false positives. Inactive segment text-slate-400 #94a3b8 on slate-900 #0f172a is ~7:1; slate-950 on amber-500 is ~10:1. Hook reads the active-state class in a ternary as the background."
+      }
+    ]
+  }
+}

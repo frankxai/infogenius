@@ -582,7 +582,7 @@ const App: React.FC = () => {
             <Zap className="w-5 h-5 text-cyan-500 fill-current" />
             <div>
               <span className="font-display font-bold text-lg tracking-tight dark:text-white block leading-none">
-                InfoGenius v5.3
+                InfoGenius
               </span>
               <span className="text-[10px] text-cyan-400 font-semibold">
                 Multi-Brand Visual Knowledge OS
@@ -620,8 +620,14 @@ const App: React.FC = () => {
                   <span
                     className="w-2.5 h-2.5 rounded-full border border-white/20"
                     style={{ backgroundColor: bw.primaryHex }}
+                    aria-hidden="true"
                   />
                 </div>
+                {!STYLE_PACK_COLORS[bw.id].placementApproved && (
+                  <span className="mt-1 block text-[10px] font-semibold normal-case text-slate-400">
+                    Draft palette
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -969,9 +975,9 @@ const App: React.FC = () => {
                       onChange={(e) => setVisualStyle(e.target.value as any)}
                       className="bg-slate-100 dark:bg-slate-800 text-xs font-bold px-3 py-2 rounded-xl border-none dark:text-white"
                     >
-                      <option value="Glassmorphic">3D Glassmorphic (v5.3)</option>
-                      <option value="Premium">Luxury Brand (v5.3)</option>
-                      <option value="Starlight Cosmos">Starlight Neural Cosmos (SIP)</option>
+                      <option value="Glassmorphic">3D Glassmorphic</option>
+                      <option value="Premium">Luxury Brand</option>
+                      <option value="Starlight Cosmos">Starlight Cosmos</option>
                       <option value="GenCreator Editorial">GenCreator Territory B Editorial</option>
                       <option value="Arcanea Sacred Geometry">Arcanea Sacred Geometry</option>
                       <option value="Da Vinci Blueprint">FrankX Da Vinci Blueprint</option>
